@@ -1,209 +1,199 @@
 #include "bstree.h"
+#include "stdio.h"
 
-tree tree_create(u32 name, u32 position){
+map map_create() {
+    map m = (map)malloc(sizeof(struct Map));
+    m->root = NULL;
+    m->size = 0;
+    return m;
+}
+
+tree tree_create(u32 key, u32 value) {
     tree t = (tree)malloc(sizeof(struct Tree));
-    node n = node_create(name, position);
-    n->height = 1;
-    n->parent = n;
-    t->first = n;
+    t->key = key;
+    t->value = value;
+    t->height = 1;
+    t->parent = NULL;
+    t->right = NULL;
+    t->left = NULL;
     return t;
 }
 
-/*
-
-T1, T2 and T3 are subtrees of the tree 
-rooted with y (on the left side) or x (on 
-the right side) 
-
-     y                               x
-    / \     Right Rotation          /  \
-   x   T3   - - - - - - - >        T1   y 
-  / \       < - - - - - - -            / \
- T1  T2     Left Rotation            T2  T3
-
-names in both of the above trees follow the 
-following order 
-names(T1) < name(x) < names(T2) < name(y) < names(T3)
-So BST property is not violated anywhere.
-
-*/
-
-// An utility function to right rotate subtree rooted with y
-void tree_rRotate(node y){ 
-    node x = y->left; 
-    node T2 = x->right; 
-  
-    // Perform rotation 
-    x->right = y; 
-    y->left = T2; 
-  
-    // Update heights 
-    y->height = max(y->left->height, y->right->height) + 1; 
-    x->height = max(x->left->height, x->right->height) + 1; 
-  
-    // Return new root 
-    return x; 
+static u32 max(u32 a, u32 b) {
+    return (a > b) ? a : b;
 }
 
-// An utility function to left rotate subtree rooted with x
-void tree_lRotate(node x){ 
-    node y = x->right; 
-    node T2 = y->left; 
-  
-    // Perform rotation 
-    y->left = x; 
-    x->right = T2; 
-  
-    //  Update heights 
-    x->height = max(x->left->height, x->right->height) + 1; 
-    y->height = max(y->left->height, y->right->height) + 1; 
-  
-    // Return new root 
-    return y; 
+static void tree_height(tree t) {
+    if(t->left && t->right)
+        t->height = max(t->left->height, t->right->height) + 1;
+    else if(t->right)
+        t->height = t->right->height + 1;
+    else if(t->left) 
+        t->height = t->left->height + 1;
 }
 
-// Get balance factor of node N 
-u32 tree_balanced(node n){ 
-    if (n == NULL) 
-        return 0; 
-    return abs(n->left->height - n->right->height); 
+static void tree_rotateR(tree Q) { 
+    tree P = Q->left;
+
+    Q->left = P->right;
+    if(Q->left) Q->left->parent = Q;
+
+    P->right = Q;
+
+    if(Q->parent && Q->parent->left == Q) Q->parent->left = P;
+    if(Q->parent && Q->parent->right == Q) Q->parent->right = P;
+
+    P->parent = Q->parent;
+
+    Q->parent = P;
+
+    tree_height(Q);
+    tree_height(P);
 }
 
-// Recursive function to insert a node in the tree.
-void tree_add(node n, u32 name, u32 position){
-    /* 1.  Perform the normal BST insertion */
-    if(n == NULL) {
-        node n = node_create(name, position);
-    } else if(name > n->name){
-        tree_add(n->right, name, position);
-    } else if(name < n->name){
-        tree_add(n->left, name, position);
-    }
-  
-    /* 2. Update height of this ancestor node */
-    n->height = max(n->left->height, n->right->height) + 1;
-  
-    /* 3. Get the balance factor of this ancestor 
-          node to check whether this node became 
-          unbalanced */
-    u32 balance = tree_balanced(n); 
-  
-    // If this node becomes unbalanced, then 
-    // there are 4 cases 
-  
-    // Left Left Case 
-    if (balance > 1 && name < n->left->name) 
-        tree_rRotate(n); 
-  
-    // Right Right Case 
-    if (balance < -1 && name > n->right->name) 
-        tree_lRotate(n); 
-  
-    // Left Right Case 
-    if (balance > 1 && name > n->left->name){ 
-        tree_lRotate(n->left); 
-        tree_rRotate(n); 
-    } 
-  
-    // Right Left Case 
-    if (balance < -1 && name < n->right->name){ 
-        tree_rRotate(n->right); 
-        tree_lRotate(n); 
+static void tree_rotateL(tree P) { 
+    tree Q = P->right;
+
+    P->right = Q->left;
+    if(P->right) P->right->parent = P;
+
+    Q->left = P;
+
+    if(P->parent && P->parent->right == P) P->parent->right = Q;
+    if(P->parent && P->parent->left == P) P->parent->left = Q;
+
+
+    Q->parent = P->parent;
+
+    P->parent = Q;
+
+    tree_height(P);
+    tree_height(Q);
+}
+
+
+static tree tree_find(tree t, u32 key) {
+    while(1) {
+        if(key > t->key)
+            if(t->right) t = t->right;
+            else return t;
+        if(key < t->key)
+            if(t->left) t = t->left;
+            else return t;
+        if(key == t->key)
+            return t;
     }
 }
 
-// Recursive function to delete a node with given name 
-// from subtree with given root. It returns root of 
-// the modified subtree. 
-void tree_delete(node root, u32 name) 
-{ 
-    // STEP 1: PERFORM STANDARD BST DELETE 
+static void tree_add(tree p, tree n) {
+    if(n->key > p->key)
+        p->right = n;
+    else
+        p->left = n;
+    n->parent = p;
+}
 
-    if (name < root->name) 
-        tree_delete(root->left, name); 
-    else if(name > root->name) 
-        tree_delete(root->right, name); 
-  
-    // if name is same as root's name, then This is 
-    // the node to be deleted 
-    else { 
-        // node with only one child or no child 
-        if( (root->left == NULL) || (root->right == NULL) ){ 
-            node temp = root->left ? root->left : root->right; 
-  
-            // No child case 
-            if (temp == NULL){ 
-                temp = root; 
-                root = NULL; 
-            } else // One child case 
-             *root = *temp; // Copy the contents of 
-                            // the non-empty child 
-            free(temp); 
-        } else { 
-            // node with two children: Get the inorder 
-            // successor (smallest in the right subtree) 
-            node temp = tree_min(root->right); 
-  
-            // Copy the inorder successor's data to this node 
-            root->name = temp->name; 
-  
-            // Delete the inorder successor 
-            tree_delete(root->right, temp->name); 
+static int tree_factor(tree t) {
+    if(t->left && t->right)
+        return t->left->height - t->right->height;
+    else if(t->right)
+        return -t->right->height;
+    else if(t->left)
+        return t->left->height;
+    else
+        return 0;
+}
+
+static tree tree_balance(tree t) {
+    u32 key = t->key;
+    tree root;
+    while(t) {
+        tree_height(t);
+        int balance = tree_factor(t);
+
+        assert(abs(balance) <= 2);
+
+        // Left Left Case 
+        if (balance > 1 && key < t->left->key) {
+            tree_rotateR(t); 
+            t = t->parent;
+        }
+    
+        // Right Right Case 
+        if (balance < -1 && key > t->right->key) {
+            tree_rotateL(t);
+            t = t->parent;
+        }
+    
+        // Left Right Case 
+        if (balance > 1 && key > t->left->key) { 
+            tree_rotateL(t->left);
+            tree_rotateR(t);
+            t = t->parent;
         } 
-    } 
+    
+        // Right Left Case 
+        if (balance < -1 && key < t->right->key) { 
+            tree_rotateR(t->right);
+            tree_rotateL(t);
+            t = t->parent;
+        }
+        root = t;
+        t = t->parent;
+    }
+    return root;
+}
+
+// Function to print binary tree in 2D  
+// It does reverse inorder traversal  
+void print2DUtil(tree root, int space)  
+{  
+    // Base case  
+    if (root == NULL)  
+        return;  
   
-    // If the tree had only one node then return 
-    if (root == NULL) 
-      return; 
+    // Increase distance between levels  
+    space += 10;  
   
-    // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE 
-    root->height = 1 + max(root->left->height, root->right->height); 
+    // Process right child first  
+    print2DUtil(root->right, space);  
   
-    // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to 
-    // check whether this node became unbalanced) 
-    u32 balance = tree_balanced(root); 
+    // Print current tree fter space  
+    // 10  
+    printf("\n");
+    for (int i = 10; i < space; i++)  
+        printf(" ");
+        printf("%u\n", root->key);
   
-    // If this node becomes unbalanced, then there are 4 cases 
+    // Process left child  
+    print2DUtil(root->left, space);  
+}  
   
-    // Left Left Case 
-    if (balance > 1 && tree_balanced(root->left) >= 0) 
-        tree_rRotate(root); 
-  
-    // Left Right Case 
-    if (balance > 1 && tree_balanced(root->left) < 0) 
-    { 
-        tree_lRotate(root->left); 
-        tree_rRotate(root); 
-    } 
-  
-    // Right Right Case 
-    if (balance < -1 && tree_balanced(root->right) <= 0) 
-        tree_lRotate(root); 
-  
-    // Right Left Case 
-    if (balance < -1 && tree_balanced(root->right) > 0) 
-    { 
-        tree_rRotate(root->right); 
-        tree_lRotate(root); 
+// Wrapper over print2DUtil()  
+void print2D(tree root)  
+{  
+    // Pass initial space 10 as 0  
+    print2DUtil(root, 0);  
+}  
+
+void map_add(map m, u32 key, u32 value) {
+    if(!m->size) {
+        tree t = tree_create(key, value);
+        m->root = t;
+        m->size++;
+    } else {
+        tree n = tree_find(m->root, key);
+        if(n->key == key) 
+            n->value = value;
+        else {
+            tree t = tree_create(key, value);
+            tree_add(n, t);
+            m->root = tree_balance(t);
+
+            m->size++;
+        }
     }
 }
 
-// Given a non-empty binary search tree, return the 
-// node with minimum name value found in that tree.
-node tree_min(node n){
-    node m = n;
-    while (m->left != NULL) 
-        m = m->left; 
-    return m; 
-}
 
-node node_create(u32 name, u32 position){
-    node n = (node)malloc(sizeof(struct Node));
-    n->name = name;
-    n->position = position;
-    n->left = NULL;
-    n->right = NULL;
-    n->parent = NULL;
-    return n;
-}
-
+  
