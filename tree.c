@@ -1,5 +1,8 @@
+
 #include "tree.h"
 
+// Struct of the tree. Used by map to keep track of all
+// nodes position in the graph with the key and value.
 struct Tree {
     u32 key;
     u32 value;
@@ -9,6 +12,12 @@ struct Tree {
     tree left;
 };
 
+// Auxiliar max value function.
+static u32 max(u32 a, u32 b) {
+    return (a > b) ? a : b;
+}
+
+// Creates an empty tree.
 tree tree_create(u32 key, u32 value) {
     tree t = (tree)malloc(sizeof(struct Tree));
     t->key = key;
@@ -20,10 +29,7 @@ tree tree_create(u32 key, u32 value) {
     return t;
 }
 
-static u32 max(u32 a, u32 b) {
-    return (a > b) ? a : b;
-}
-
+// Returns height of a node.
 static u32 tree_height(tree t) {
 	if(!t || (!t->left && !t->right))
 		return 0;
@@ -35,10 +41,12 @@ static u32 tree_height(tree t) {
         return t->left->height + 1;
 }
 
+// Returns the difference between the height of the left and right subtrees
 static int tree_factor(tree t) {
 	return tree_height(t->left) - tree_height(t->right);
 }
 
+// Rotates a node to the right (see tree.h commentarys)
 static void tree_rotateR(tree Q) { 
     tree P = Q->left;
 
@@ -58,6 +66,7 @@ static void tree_rotateR(tree Q) {
     P->height = tree_height(P);
 }
 
+// Rotates a node to the left (see tree.h commentarys)
 static void tree_rotateL(tree P) { 
     tree Q = P->right;
 
@@ -78,6 +87,7 @@ static void tree_rotateL(tree P) {
     Q->height = tree_height(Q);
 }
 
+// Rotates the tree to keep it an AVL Tree.
 tree tree_balance(tree t) {
     u32 key = t->key;
     tree root = NULL;
@@ -118,7 +128,7 @@ tree tree_balance(tree t) {
     return root;
 }
 
-
+// Search an element on the tree (O(log(n)))
 tree tree_find(tree t, u32 key) {
     while(1) {
         if(key > t->key)
@@ -132,6 +142,7 @@ tree tree_find(tree t, u32 key) {
     }
 }
 
+// Adds an element to the tree, then balances it.
 void tree_add(tree p, tree n) {
     if(n->key > p->key)
         p->right = n;
@@ -141,19 +152,26 @@ void tree_add(tree p, tree n) {
 	tree_balance(n);
 }
 
-void tree_erase(tree t) {
-
-}
-
-
-u32 tree_getkey(tree t) {
+// Returns key of a node.
+u32 tree_getKey(tree t) {
 	return t->key;
 }
 
-u32* tree_getvalue(tree t) {
+// Returns pointer to a node's value.
+u32* tree_getValue(tree t) {
 	return &t->value;
 }
 
-void tree_setvalue(tree t, u32 value) {
+// Sets a given node with the given value.
+void tree_setValue(tree t, u32 value) {
 	t->value = value;
+}
+
+// Deletes the entire tree and frees the memory.
+void tree_delete(tree t) {
+    if(t->left)
+        tree_delete(t->left);
+    if(t->right)
+        tree_delete(t->right);
+    free(t); t = NULL;
 }
