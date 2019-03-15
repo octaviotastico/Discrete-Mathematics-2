@@ -7,7 +7,7 @@ struct Vector {
 };
 
 static void vector_resize(vector v, size_t cap) {
-    v->array = (int*)realloc(v->array, cap * sizeof(int));
+    v->array = (u32*)realloc(v->array, cap * sizeof(u32));
 }
 
 vector vector_create() {
@@ -17,7 +17,7 @@ vector vector_create() {
     v->capacity = 0;
 }
 
-void vector_push_back(vector v, int x) {
+void vector_push_back(vector v, u32 x) {
     assert(v != NULL);
     if(v->size == v->capacity) {
         if(!v->capacity) v->capacity++;
@@ -37,28 +37,10 @@ void vector_pop_back(vector v) {
     }
 }
 
-int vector_at(vector v, int i) {
+u32 vector_at(vector v, int i) {
     assert(v != NULL);
     assert(0 <= i && i < v->size);
     return v->array[i];
-}
-
-void vector_swap(vector v, int i, int j) {
-    assert(v != NULL);
-    assert(0 <= i && i < v->size);
-    assert(0 <= j && j < v->size);
-    if(i == j) return;
-    v->array[i] ^= v->array[j];
-    v->array[j] ^= v->array[i];
-    v->array[i] ^= v->array[j];
-}
-
-void vector_shuffle(vector v) {
-
-}
-
-void vector_sort(vector v, bool comp(int, int)) {
-
 }
 
 bool vector_empty(vector v) {
