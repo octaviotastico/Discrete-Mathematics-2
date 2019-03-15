@@ -1,9 +1,7 @@
 #include "map.h"
+#include "grafo.h"
 
 int main(){
-	map m = map_create();
-	for(int i = 10000000; i >= 0; i--) {
-		map_add(m, i, i);
-	}
+	Grafo g = ConstruccionDelGrafo();
 	return 0;
 }

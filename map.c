@@ -49,10 +49,6 @@ u32* map_find(map m, u32 key) {
 
 // Deletes the entire map.
 void map_delete(map m, u32 key) {
-    if(m->size == 0) return;
-
-    tree t = tree_find(m->root, key);
-
-    if(tree_getKey(t) == key)
-        tree_erase(t);
+    tree_delete(m->root);
+    free(m); m = NULL;
 }
