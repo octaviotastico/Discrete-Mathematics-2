@@ -26,12 +26,10 @@ char* get_line() {
     return realloc(str, sizeof(char) * sz);
 }
 
-
-
 Grafo ConstruccionDelGrafo(void) {
     Grafo G = (Grafo)malloc(sizeof(struct GrafoSt));
-    G->n = G->m = G->x = 0;
     G->dict = G->color = G->order = NULL;
+    G->n = G->m = G->x = 0;
     G->g = NULL;
 
     char* line;
@@ -61,4 +59,38 @@ Grafo ConstruccionDelGrafo(void) {
             v = v * 10 + line[j++] - '0';
         }
     }
+}
+
+Grafo CopiarGrafo(Grafo G) {
+    // ENOMEM = 12, i.e out of memory.
+    Grafo copy = (Grafo)malloc(sizeof(struct GrafoSt));
+    if(copy){
+        memcpy(&G, &copy, sizeof G);
+        //copy->dict = G->dict;
+        //copy->color = G->color;
+        //copy->order = G->order;
+        //copy->n = G->n;
+        //copy->m = G->m;
+        //copy->x = G->x;
+        //copy->g = G->g;
+    }
+
+    return copy;
+}
+
+void DestruccionDelGrafo(Grafo G) {
+    vector_destroy(G->g);
+    free(G); G = NULL;
+}
+
+u32 NumeroDeVertices(Grafo G) {
+    return G->n;
+}
+
+u32 NumeroDeLados(Grafo G) {
+    return G->m;
+}
+
+u32 NumeroDeColores(Grafo G) {
+    return (*G->color);
 }
