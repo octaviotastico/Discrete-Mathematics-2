@@ -1,10 +1,11 @@
+#include "defs.h"
 #include "assert.h"
 #include "stdlib.h"
 #include "stdbool.h"
 
 typedef struct Vector* vector;
 
-vector vector_init();
+vector vector_create();
 
 void vector_push_back(vector, int);
 

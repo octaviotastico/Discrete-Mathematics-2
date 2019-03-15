@@ -168,10 +168,10 @@ void tree_setValue(tree t, u32 value) {
 }
 
 // Deletes the entire tree and frees the memory.
-void tree_delete(tree t) {
+void tree_destroy(tree t) {
     if(t->left)
-        tree_delete(t->left);
+        tree_destroy(t->left);
     if(t->right)
-        tree_delete(t->right);
-    free(t); t = NULL;
+        tree_destroy(t->right);
+    free(t);
 }

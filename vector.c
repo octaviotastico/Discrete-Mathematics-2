@@ -1,7 +1,7 @@
 #include "vector.h"
 
 struct Vector {
-    int* array;
+    u32* array;
     size_t size;
     size_t capacity;
 };
@@ -10,7 +10,7 @@ static void vector_resize(vector v, size_t cap) {
     v->array = (int*)realloc(v->array, cap * sizeof(int));
 }
 
-vector vector_init() {
+vector vector_create() {
     vector v = (vector)malloc(sizeof(struct Vector));
     v->array = NULL;
     v->size = 0;

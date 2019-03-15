@@ -19,7 +19,7 @@ u32* tree_getValue(tree);
 // Sets a given node with the given value.
 void tree_setValue(tree, u32);
 // Deletes a the tree.
-void tree_delete(tree);
+void tree_destroy(tree);
 
 /* Commentary to understand tree_rotateR, and tree_rotateL
 

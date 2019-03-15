@@ -47,8 +47,12 @@ u32* map_find(map m, u32 key) {
         return NULL;
 }
 
+size_t map_size(map m) {
+    return m->size;
+}
+
 // Deletes the entire map.
-void map_delete(map m, u32 key) {
-    tree_delete(m->root);
-    free(m); m = NULL;
+void map_destroy(map m) {
+    tree_destroy(m->root);
+    free(m);
 }

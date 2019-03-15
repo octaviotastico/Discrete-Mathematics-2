@@ -18,5 +18,7 @@ map map_create();
 void map_add(map, u32, u32);
 // Finds an element in the map given it's key.
 u32* map_find(map, u32);
+// Size of map
+size_t map_size(map);
 // Deletes the entire map.
-void map_delete(map, u32);
+void map_destroy(map);
