@@ -4,42 +4,47 @@
 #include "grafo.c"
 
 u32 Greedy(Grafo G) {
-	map m = map_create();
 	u32 v, n, c;
+	map m = map_create(); G->x = 0;
+	memset(G->color, -1, sizeof(G->color));
 	fore(i, 0, G->n) {
-		v = vector_at(G->g[G->order[i]], 0);
-		fore(j, 1, GradoDelVertice(G, v)) {
-			n = vector_at(G->g[G->order[i]], j);
+		v = G->order[i]; c = 0;
+		fore(j, 0, GradoDelVertice(G, v)) {
+			n = NombreJotaesimoVecino(G, v, j);
 			map_add(m, ColorDelVertice(G, j), ColorDelVertice(G, j));
 		}
-		c = 0;
 		while(map_find(m, c)) c++;
+		G->x = max(G->x, c);
 		G->color[v] = c;
 		map_clear(m);
 	}
 }
 
 int Bipartito(Grafo G) {
-	u32 neighbour;
-	u32 v; int visited[G->n], c = 0;
-	memset(visited, 0, sizeof(visited));
+	int conflict = 0, c = 0;
+	u32 v = G->order[0], neighbour;
 	vector stack = vector_create();
-	v = vector_at(G->g[G->order[0]], 0);
+	memset(G->color, -1, sizeof(G->color));
 	vector_push_back(stack, v);
-	G->color[v] = c; c++;
+	G->color[v] = c; c++; G->x = 1;
 	while(!vector_empty(stack)) {
 		v = vector_pop_back(stack);
-		visited[v] = 1;
 		fore(i, 0, GradoDelVertice(G, v)) {
 			neighbour = NombreJotaesimoVecino(G, v, i);
-			if(!visited[neighbour]) {
+			if(G->color[neighbour] != -1 && G->color[neighbour] != c)
+				conflict = 1;
+			if(!conflict) {
 				vector_push_back(stack, neighbour);
-				visited[neighbour] = 1;
 				G->color[neighbour] = c;
+			} else {
+				Greedy(G);
+				return 0;
 			}
 		}
 		c = c == 1 ? 0 : 1;
 	}
+	G->x = 2;
+	return !conflict;
 }
 
 #endif
