@@ -1,21 +1,16 @@
-// Project includes
 #include "grafo.h"
-#include "map.h"
-#include "vector.h"
 
-// Struct GrafoSt to save all
-// nodes, edges, and extra info.
 struct GrafoSt {
     u32 n; // Number of vertex.
     u32 m; // Number of edges.
     u32 x; // Number of colors.
     u32* dict; // Map to nodes.
     u32* color; // Array with colors.
-    u32* order; // Natural order of vertex.
-    vector* g; // All vertex in the graph.
+    u32* order; // Order of vertex.
+    vector* g; // Adjacency list.
 };
 
-// Function to read the input to fill the graph.
+// Function to read a line of input to fill the graph.
 char* get_line() {
     char* str = (char*)malloc(sizeof(char));
     if(!str) return str;
@@ -158,9 +153,9 @@ Grafo ConstruccionDelGrafo(void) {
         return NULL;
     }
 
-    // No color
-    fore(i, 0, G->n) G->color[i] = -1;
-    // Natural order
+    // Default coloring
+    fore(i, 0, G->n) G->color[i] = i;
+    // Natural order (Default)
     fore(i, 0, G->n) G->order[i] = i;
 
     // Map the smallest one with 0, the second smallest to 1, ..., the greatest to n - 1
@@ -206,56 +201,41 @@ Grafo ConstruccionDelGrafo(void) {
 // purposes. Returns NULL if something fails.
 Grafo CopiarGrafo(Grafo G) {
     Grafo copy = (Grafo)malloc(sizeof(struct GrafoSt));
-    if(copy){
 
-        copy->n = G->n;
-        copy->m = G->m;
-        copy->x = G->x;
-        copy->g = G->g;
+    if(!copy) return NULL;
 
-        copy->g = (vector*)malloc(copy->n * sizeof(vector));
-        if(!copy->g) {
-            DestruccionDelGrafo(copy);
+    copy->n = G->n;
+    copy->m = G->m;
+    copy->x = G->x;
+    copy->g = G->g;
+
+    copy->g = (vector*)malloc(copy->n * sizeof(vector));
+    copy->dict = (u32*)malloc(copy->n * sizeof(u32));
+    copy->color = (u32*)malloc(copy->n * sizeof(u32));
+    copy->order = (u32*)malloc(copy->n * sizeof(u32));
+
+    if(!copy->g || !copy->dict || !copy->color || !copy->order) {
+        DestruccionDelGrafo(copy);
+        return NULL;
+    }
+
+    fore(i, 0, copy->n) {
+        copy->color[i] = G->color[i];
+        copy->order[i] = G->order[i];
+        copy->dict[i] = G->dict[i];
+
+        copy->g[i] = vector_create();
+        if(!copy->g[i]) {
+            DestruccionDelGrafo(G);
             return NULL;
         }
-        copy->dict = (u32*)malloc(copy->n * sizeof(u32));
-        if(!copy->dict) {
-            DestruccionDelGrafo(copy);
-            return NULL;
-        }
-        copy->color = (u32*)malloc(copy->n * sizeof(u32));
-        if(!copy->color) {
-            DestruccionDelGrafo(copy);
-            return NULL;
-        }
-        copy->order = (u32*)malloc(copy->n * sizeof(u32));
-        if(!copy->order) {
-            DestruccionDelGrafo(copy);
-            return NULL;
-        }
 
-        fore(i, 0, copy->n) {
-            copy->color[i] = G->color[i];
-            copy->order[i] = G->order[i];
-
-            copy->g[i] = vector_create();
-            if(!copy->g[i]) {
-                DestruccionDelGrafo(G);
+        fore(j, 0, vector_size(G->g[i])) {
+            u32 v1 = vector_at(G->g[i], j);
+            if(vector_push_back(copy->g[i], v1)) {
+                DestruccionDelGrafo(copy);
                 return NULL;
             }
-
-            fore(j, 0, copy->m) {
-                u32 v1 = vector_at(G->g[i], j);
-                if(vector_push_back(copy->g[i], v1)) {
-                    DestruccionDelGrafo(copy);
-                    return NULL;
-                }
-            }
-
-        }
-
-        fore(i, 0, copy->m) {
-            copy->dict[i] = G->dict[i];
         }
     }
 
@@ -271,12 +251,9 @@ void DestruccionDelGrafo(Grafo G) {
         
         free(G->g);
     }
-    if(G->dict)
-        free(G->dict);
-    if(G->color)
-        free(G->color);
-    if(G->order)
-        free(G->order);
+    if(G->dict) free(G->dict);
+    if(G->color) free(G->color);
+    if(G->order) free(G->order);
     free(G);
 }
 
@@ -305,33 +282,25 @@ u32 NumeroDeColores(Grafo G) {
 
 // Returns the number of the vertex in the given position.
 u32 NombreDelVertice(Grafo G, u32 i) {
-    return vector_at(G->g, i);
+    return G->dict[G->order[i]];
 }
 
 // Returns the color of the given vertex. Otherwise 2^32-1.
 u32 ColorDelVertice(Grafo G, u32 i) {
-    if(i < G->n)
-        return G->color[i];
-    else
-        return -1;
+    return G->color[G->order[i]];
 }
 
 // Returns the vertex adjacency in the given position.
 u32 GradoDelVertice(Grafo G, u32 i) {
-    if(i < G->n)
-        return vector_size(G->g[i]);
-    else
-        return -1;
+    return vector_size(G->g[G->order[i]]);
 }
 
 // Returns the color of the given neighbour of the given vertex.
 u32 ColorJotaesimoVecino(Grafo G, u32 i,u32 j) {
-    u32 v = vector_at(G->g[i], j + 1); // This returns the j-th neighbour.
-    return ColorDelVertice(G, v /*i + j + 1*/);
+    return G->color[vector_at(G->g[G->order[i]], j)];
 }
 
 // Returns the number of the given neighbour of the given vertex.
 u32 NombreJotaesimoVecino(Grafo G, u32 i,u32 j) {
-    u32 v = vector_at(G->g[i], j + 1);
-    return NombreDelVertice(G, v);
+    return G->dict[vector_at(G->g[G->order[i]], j)];
 }

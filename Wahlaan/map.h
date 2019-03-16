@@ -1,8 +1,7 @@
 #ifndef MAP
 #define MAP
 
-#include "tree.h"
-#include "vector.h"
+#include "Rii.h"
 
 // Node to struct Map in map.c.
 typedef struct Map * map;

@@ -1,7 +1,7 @@
 #ifndef GRAFO
 #define GRAFO
 
-#include "defs.h"
+#include "Rii.h"
 
 typedef struct GrafoSt* Grafo;
 

@@ -1,7 +1,7 @@
 #ifndef VECTOR
 #define VECTOR
 
-#include "defs.h"
+#include "Rii.h"
 
 typedef struct Vector* vector;
 

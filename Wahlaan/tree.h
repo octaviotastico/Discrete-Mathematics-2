@@ -1,8 +1,7 @@
 #ifndef TREE
 #define TREE
 
-#include "defs.h"
-#include "vector.h"
+#include "Rii.h"
 
 // Node to struct Tree in tree.c.
 typedef struct Tree * tree;
