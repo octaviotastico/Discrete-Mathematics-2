@@ -39,7 +39,6 @@ Grafo ConstruccionDelGrafo(void) {
         line = get_line();
     } while(line[0] == 'c');
 
-
     if(memcmp(line, "p edge", 6)) {
         free(G);
         return NULL;
@@ -59,6 +58,12 @@ Grafo ConstruccionDelGrafo(void) {
 
     map m = map_create();
     G->g = (vector*)malloc(G->n * sizeof(vector));
+    if(!G->g) { // Not enough memory for vector.
+        map_destroy(m);
+        free(G); G = NULL;
+        return NULL;
+    }
+
     fore(i, 0, G->n) {
         G->g[i] = vector_create();
     }
@@ -67,11 +72,7 @@ Grafo ConstruccionDelGrafo(void) {
         line = get_line();
         if(line[0] != 'e') {
             map_destroy(m);
-            fore(i, 0, G->n) {
-                vector_destroy(G->g[i]);
-            }
-            free(G->g);
-            free(G);
+            DestruccionDelGrafo(G);
             return NULL;
         }
         int j = 2;
@@ -105,11 +106,24 @@ Grafo ConstruccionDelGrafo(void) {
 
         printf("%d %d %d %d\n", u, real_u, v, real_v);
     }
+
+    G->dict = m;
+
+    G->color = (vector*)malloc(G->n * sizeof(vector));
+    if(!G->color) {
+        map_destroy(m);
+        DestruccionDelGrafo(G);
+    }
+    G->order = (vector*)malloc(G->n * sizeof(vector));
+    if(!G->order) {
+        map_destroy(m);
+        DestruccionDelGrafo(G);
+    }
+
     return G;
 }
 
 Grafo CopiarGrafo(Grafo G) {
-    // ENOMEM = 12, i.e out of memory.
     Grafo copy = (Grafo)malloc(sizeof(struct GrafoSt));
     if(copy){
         memcpy(&G, &copy, sizeof G);
@@ -126,7 +140,10 @@ Grafo CopiarGrafo(Grafo G) {
 }
 
 void DestruccionDelGrafo(Grafo G) {
-    vector_destroy(G->g);
+    fore(i, 0, G->n) {
+        vector_destroy(G->g[i]);
+    }
+    free(G->g); G->g = NULL;
     free(G); G = NULL;
 }
 
@@ -139,5 +156,5 @@ u32 NumeroDeLados(Grafo G) {
 }
 
 u32 NumeroDeColores(Grafo G) {
-    return (*G->color);
+    return G->x;
 }
