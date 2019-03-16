@@ -144,7 +144,9 @@ Grafo ConstruccionDelGrafo(void) {
     }
 
     // Default coloring
+    G->x = G->n;
     fore(i, 0, G->n) G->color[i] = i;
+
     // Natural order (Default)
     fore(i, 0, G->n) G->order[i] = i;
 

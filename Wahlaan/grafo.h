@@ -17,7 +17,19 @@ void DestruccionDelGrafo(Grafo);
 
 u32 NumeroDeVertices(Grafo);
 
+u32 NumeroDeLados(Grafo);
+
+u32 NumeroDeColores(Grafo);
+
+u32 NombreDelVertice(Grafo, u32);
+
 u32 GradoDelVertice(Grafo, u32);
+
+u32 ColorDelVertice(Grafo, u32);
+
+u32 ColorJotaesimoVecino(Grafo, u32, u32);
+
+u32 NombreJotaesimoVecino(Grafo, u32, u32);
 
 
 // order.c

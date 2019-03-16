@@ -66,7 +66,7 @@ static u32 tree_height(tree t) {
         return max(t->left->height, t->right->height) + 1;
     else if(t->right)
         return t->right->height + 1;
-    else if(t->left) 
+    else 
         return t->left->height + 1;
 }
 

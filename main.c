@@ -11,5 +11,26 @@ int main() {
 		u32 w = GradoDelVertice(g, i);
 		printf("%u ", w);
 	} printf("\n");
+
+	RMBCnormal(g);
+	fore(i, 0, n) {
+		u32 c = ColorDelVertice(g, i);
+		u32 n = NombreDelVertice(g, i);
+		printf("%u:%u ", c, n);
+	} printf("\n");
+
+	RMBCrevierte(g);
+	fore(i, 0, n) {
+		u32 c = ColorDelVertice(g, i);
+		u32 n = NombreDelVertice(g, i);
+		printf("%u:%u ", c, n);
+	} printf("\n");
+
+	RMBCchicogrande(g);
+	fore(i, 0, n) {
+		u32 c = ColorDelVertice(g, i);
+		u32 n = NombreDelVertice(g, i);
+		printf("%u:%u ", c, n);
+	} printf("\n");
 	return 0;
 }
