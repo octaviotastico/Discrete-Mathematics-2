@@ -17,6 +17,7 @@ vector vector_create() {
     v->array = NULL;
     v->size = 0;
     v->capacity = 0;
+    return v;
 }
 
 int vector_push_back(vector v, u32 x) {
@@ -44,8 +45,6 @@ void vector_pop_back(vector v) {
 }
 
 u32 vector_at(vector v, int i) {
-    assert(v != NULL);
-    assert(0 <= i && i < v->size);
     return v->array[i];
 }
 

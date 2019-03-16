@@ -13,6 +13,6 @@ typedef unsigned int u32;
 #include "vector.h"
 #include "tree.h"
 
-#define fore(i, s, e) for(u32 i = s; i < e; i++)
+#define fore(i, s, e) for(u32 i = s; i < (u32)e; i++)
 
 #endif

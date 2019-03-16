@@ -11,6 +11,36 @@ struct Tree {
     tree left;
 };
 
+void print2DUtil(tree root, int space)  
+{  
+    // Base case  
+    if (root == NULL)  
+        return;  
+  
+    // Increase distance between levels  
+    space += 10;  
+  
+    // Process right child first  
+    print2DUtil(root->right, space);  
+  
+    // Print current node after space  
+    // count  
+    printf("\n");
+    for (int i = 10; i < space; i++)  
+        printf(" ");
+    printf("%d:%d", root->key, root->value);
+  
+    // Process left child  
+    print2DUtil(root->left, space);  
+}  
+  
+// Wrapper over print2DUtil()  
+void print2D(tree root)  
+{  
+    // Pass initial space count as 0  
+    print2DUtil(root, 0);  
+}  
+
 // Auxiliar max value function.
 static u32 max(u32 a, u32 b) {
     return (a > b) ? a : b;
@@ -90,6 +120,7 @@ static void tree_rotateL(tree P) {
 tree tree_balance(tree t) {
     u32 key = t->key;
     tree root = NULL;
+
     while(t) {
         t->height = tree_height(t);
         int balance = tree_factor(t);
@@ -98,25 +129,23 @@ tree tree_balance(tree t) {
 
         // Left Left Case 
         if (balance > 1 && key < t->left->key) {
-            tree_rotateR(t); 
-            t = t->parent;
+            tree_rotateR(t);
         }
     
         // Right Right Case 
-        if (balance < -1 && key > t->right->key) {
+        else if (balance < -1 && key > t->right->key) {
             tree_rotateL(t);
-            t = t->parent;
         }
     
         // Left Right Case 
-        if (balance > 1 && key > t->left->key) { 
+        else if (balance > 1 && key > t->left->key) { 
             tree_rotateL(t->left);
             tree_rotateR(t);
             t = t->parent;
         } 
     
         // Right Left Case 
-        if (balance < -1 && key < t->right->key) { 
+        else if (balance < -1 && key < t->right->key) { 
             tree_rotateR(t->right);
             tree_rotateL(t);
             t = t->parent;
@@ -127,15 +156,17 @@ tree tree_balance(tree t) {
     return root;
 }
 
-// Search an element on the tree (O(log(n)))
+// Search an element on the tree, or where should be attached (O(log(n)))
 tree tree_find(tree t, u32 key) {
     while(1) {
-        if(key > t->key)
+        if(key > t->key) {
             if(t->right) t = t->right;
             else return t;
-        if(key < t->key)
+        }
+        if(key < t->key) {
             if(t->left) t = t->left;
             else return t;
+        }
         if(key == t->key)
             return t;
     }
@@ -165,36 +196,6 @@ u32* tree_getValue(tree t) {
 void tree_setValue(tree t, u32 value) {
 	t->value = value;
 }
-
-void print2DUtil(tree root, int space)  
-{  
-    // Base case  
-    if (root == NULL)  
-        return;  
-  
-    // Increase distance between levels  
-    space += 10;  
-  
-    // Process right child first  
-    print2DUtil(root->right, space);  
-  
-    // Print current node after space  
-    // count  
-    printf("\n");
-    for (int i = 10; i < space; i++)  
-        printf(" ");
-    printf("%d:%d", root->key, root->value);
-  
-    // Process left child  
-    print2DUtil(root->left, space);  
-}  
-  
-// Wrapper over print2DUtil()  
-void print2D(tree root)  
-{  
-    // Pass initial space count as 0  
-    print2DUtil(root, 0);  
-}  
 
 int tree_inorder_restructure(tree t, int c) {
     if(t->left)
