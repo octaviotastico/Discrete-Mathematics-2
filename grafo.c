@@ -111,7 +111,7 @@ Grafo ConstruccionDelGrafo(void) {
             free(line);
             free(m), free(u), free(v);
             DestruccionDelGrafo(G);
-            printf("error de lectura en lado %i\n", i);
+            printf("error de lectura en lado %i\n", i + 1);
             return NULL;
         }
         int j = 2;
@@ -145,7 +145,7 @@ Grafo ConstruccionDelGrafo(void) {
     if(map_size(m) != G->n) {
         free(m), free(u), free(v);
         DestruccionDelGrafo(G);
-        printf("cantidad de vertices leidos no es la declarada");
+        printf("cantidad de vertices leidos no es la declarada\n");
         return NULL;
     }
 
