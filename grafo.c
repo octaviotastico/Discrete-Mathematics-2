@@ -207,7 +207,7 @@ Grafo ConstruccionDelGrafo(void) {
 Grafo CopiarGrafo(Grafo G) {
     Grafo copy = (Grafo)malloc(sizeof(struct GrafoSt));
     if(copy){
-        
+
         copy->n = G->n;
         copy->m = G->m;
         copy->x = G->x;
@@ -235,20 +235,15 @@ Grafo CopiarGrafo(Grafo G) {
         }
 
         fore(i, 0, copy->n) {
+            copy->color[i] = G->color[i];
+            copy->order[i] = G->order[i];
+
             copy->g[i] = vector_create();
             if(!copy->g[i]) {
                 DestruccionDelGrafo(G);
                 return NULL;
             }
-        }
 
-        fore(i, 0, copy->n) {
-            copy->dict[i] = G->dict[i];
-            copy->color[i] = G->color[i];
-            copy->order[i] = G->order[i];
-        }
-
-        fore(i, 0, copy->n) {
             fore(j, 0, copy->m) {
                 u32 v1 = vector_at(G->g[i], j);
                 if(vector_push_back(copy->g[i], v1)) {
@@ -256,6 +251,11 @@ Grafo CopiarGrafo(Grafo G) {
                     return NULL;
                 }
             }
+
+        }
+
+        fore(i, 0, copy->m) {
+            copy->dict[i] = G->dict[i];
         }
     }
 
