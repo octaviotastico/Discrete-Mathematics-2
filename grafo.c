@@ -149,7 +149,6 @@ Grafo ConstruccionDelGrafo(void) {
 }
 
 Grafo CopiarGrafo(Grafo G) {
-    // ENOMEM = 12, i.e out of memory.
     Grafo copy = (Grafo)malloc(sizeof(struct GrafoSt));
     if(copy){
         memcpy(&G, &copy, sizeof G);
@@ -166,7 +165,11 @@ Grafo CopiarGrafo(Grafo G) {
 }
 
 void DestruccionDelGrafo(Grafo G) {
-    free(G); G = NULL;
+    fore(i, 0, G->n) {
+        vector_destroy(G->g[i]);
+    }
+    free(G->g);
+    free(G);
 }
 
 u32 NumeroDeVertices(Grafo G) {
@@ -178,5 +181,5 @@ u32 NumeroDeLados(Grafo G) {
 }
 
 u32 NumeroDeColores(Grafo G) {
-    return (*G->color);
+    return G->x;
 }
