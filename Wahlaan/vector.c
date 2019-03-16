@@ -35,13 +35,14 @@ int vector_push_back(vector v, u32 x) {
     return 0;
 }
 
-void vector_pop_back(vector v) {
+u32 vector_pop_back(vector v) {
     assert(v != NULL);
     v->size--;
     if(2 * v->size == v->capacity) {
         v->capacity /= 2;
         vector_resize(v, v->capacity);
     }
+    return v->array[v->size + 1];
 }
 
 u32 vector_at(vector v, int i) {

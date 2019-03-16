@@ -18,5 +18,7 @@ size_t map_size(map);
 void map_restructure(map);
 // Deletes the entire map.
 void map_destroy(map);
+// Clear the map but doesn't destroy it.
+void map_clear(map);
 
 #endif

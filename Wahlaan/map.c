@@ -63,3 +63,8 @@ void map_destroy(map m) {
     tree_destroy(m->root);
     free(m);
 }
+
+// Clear the entire map, but doesn't destroy it.
+void map_clear(map m) {
+    tree_destroy(m->root);
+}

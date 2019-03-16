@@ -2,7 +2,7 @@
 
 char OrdenNatural(Grafo G) {
     // We mapped the verteces to [0, ..., n - 1] in a way where if i < j then dict[i] < dict[j]
-    // So a O(n) approch like this one could work
+    // So an O(n) approch like this one could work
 
     fore(i, 0, G->n) {
         G->order[i] = i;

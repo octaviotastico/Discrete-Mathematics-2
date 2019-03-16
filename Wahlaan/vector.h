@@ -9,7 +9,7 @@ vector vector_create();
 
 int vector_push_back(vector, u32);
 
-void vector_pop_back(vector);
+u32 vector_pop_back(vector);
 
 u32 vector_at(vector, int);
 

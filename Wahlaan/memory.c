@@ -42,7 +42,7 @@ Grafo ConstruccionDelGrafo(void) {
     if(memcmp(line, "p edge", 6)) {
         free(line);
         DestruccionDelGrafo(G);
-        printf("error en primera linea sin comentario\n");
+        printf("Error en primera linea sin comentario\n");
         return NULL;
     }
 
@@ -97,7 +97,7 @@ Grafo ConstruccionDelGrafo(void) {
         if(!line) {
             free(m), free(u), free(v);
             DestruccionDelGrafo(G);
-            printf("error de lectura en lado L\n");
+            printf("Error de lectura en lado L\n");
             return NULL;
         }
         // Check that the line is in the form 'e u v'
@@ -105,7 +105,7 @@ Grafo ConstruccionDelGrafo(void) {
             free(line);
             free(m), free(u), free(v);
             DestruccionDelGrafo(G);
-            printf("error de lectura en lado %i\n", i + 1);
+            printf("Error de lectura en lado %i\n", i + 1);
             return NULL;
         }
         int j = 2;
@@ -139,7 +139,7 @@ Grafo ConstruccionDelGrafo(void) {
     if(map_size(m) != G->n) {
         free(m), free(u), free(v);
         DestruccionDelGrafo(G);
-        printf("cantidad de vertices leidos no es la declarada\n");
+        printf("Cantidad de vertices leidos no es la declarada\n");
         return NULL;
     }
 

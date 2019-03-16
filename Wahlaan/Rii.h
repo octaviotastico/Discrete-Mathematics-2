@@ -1,6 +1,14 @@
 #ifndef RII
 #define RII
 
+/*
+
+Team:
+- Octavio Percivaldi    (octaviopercivaldi2@gmail.com)
+- Uziel Ludueña         (uziludu@gmail.com)
+
+*/
+
 #include "assert.h"
 #include "stdlib.h"
 #include "stdio.h"
