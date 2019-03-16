@@ -1,13 +1,8 @@
-/*
-
-AVL Map implementation for map
-
-https://upload.wikimedia.org/wikipedia/commons/f/fd/AVL_Tree_Example.gif
-
-
-*/
+#ifndef MAP
+#define MAP
 
 #include "tree.h"
+#include "vector.h"
 
 // Node to struct Map in map.c.
 typedef struct Map * map;
@@ -20,5 +15,9 @@ void map_add(map, u32, u32);
 u32* map_find(map, u32);
 // Size of map
 size_t map_size(map);
+// Restructre the map (change of values)
+void map_restructure(map);
 // Deletes the entire map.
 void map_destroy(map);
+
+#endif

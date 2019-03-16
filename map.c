@@ -1,5 +1,5 @@
-
 #include "map.h"
+
 
 // Map structure used to keep track
 // of the nodes in the graph.
@@ -49,6 +49,10 @@ u32* map_find(map m, u32 key) {
 
 size_t map_size(map m) {
     return m->size;
+}
+
+void map_restructure(map m) {
+    tree_inorder_restructure(m->root, 0);
 }
 
 // Deletes the entire map.

@@ -1,5 +1,8 @@
+#ifndef TREE
+#define TREE
 
 #include "defs.h"
+#include "vector.h"
 
 // Node to struct Tree in tree.c.
 typedef struct Tree * tree;
@@ -18,6 +21,8 @@ u32 tree_getKey(tree);
 u32* tree_getValue(tree);
 // Sets a given node with the given value.
 void tree_setValue(tree, u32);
+// Restructure the tree by in-order traversal
+int tree_inorder_restructure(tree, int);
 // Deletes a the tree.
 void tree_destroy(tree);
 
@@ -33,3 +38,5 @@ the right side)
  T1  T2     Left Rotation            T2  T3
 
  */
+
+#endif

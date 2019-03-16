@@ -1,25 +1,21 @@
+#ifndef VECTOR
+#define VECTOR
+
 #include "defs.h"
-#include "assert.h"
-#include "stdlib.h"
-#include "stdbool.h"
 
 typedef struct Vector* vector;
 
 vector vector_create();
 
-void vector_push_back(vector, int);
+void vector_push_back(vector, u32);
 
 void vector_pop_back(vector);
 
-int vector_at(vector, int);
+u32 vector_at(vector, int);
 
-void vector_swap(vector, int, int);
+void vector_set_at(vector v, int i, u32 x);
 
-void vector_shuffle(vector);
-
-void vector_sort(vector, bool(int, int));
-
-bool vector_empty(vector);
+int vector_empty(vector);
 
 void vector_clear(vector);
 
@@ -28,3 +24,5 @@ void vector_destroy(vector);
 size_t vector_size(vector);
 
 size_t vector_capacity(vector);
+
+#endif

@@ -1,4 +1,3 @@
-
 #include "tree.h"
 
 // Struct of the tree. Used by map to keep track of all
@@ -165,6 +164,47 @@ u32* tree_getValue(tree t) {
 // Sets a given node with the given value.
 void tree_setValue(tree t, u32 value) {
 	t->value = value;
+}
+
+void print2DUtil(tree root, int space)  
+{  
+    // Base case  
+    if (root == NULL)  
+        return;  
+  
+    // Increase distance between levels  
+    space += 10;  
+  
+    // Process right child first  
+    print2DUtil(root->right, space);  
+  
+    // Print current node after space  
+    // count  
+    printf("\n");
+    for (int i = 10; i < space; i++)  
+        printf(" ");
+    printf("%d:%d", root->key, root->value);
+  
+    // Process left child  
+    print2DUtil(root->left, space);  
+}  
+  
+// Wrapper over print2DUtil()  
+void print2D(tree root)  
+{  
+    // Pass initial space count as 0  
+    print2DUtil(root, 0);  
+}  
+
+int tree_inorder_restructure(tree t, int c) {
+    if(t->left)
+        c = tree_inorder_restructure(t->left, c);
+
+    t->value = c++;
+
+    if(t->right)
+        c = tree_inorder_restructure(t->right, c);
+    return c;
 }
 
 // Deletes the entire tree and frees the memory.

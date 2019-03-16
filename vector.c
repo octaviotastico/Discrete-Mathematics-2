@@ -43,7 +43,12 @@ u32 vector_at(vector v, int i) {
     return v->array[i];
 }
 
-bool vector_empty(vector v) {
+void vector_set_at(vector v, int i, u32 x) {
+    assert(0 <= i && i < v->size);
+    v->array[i] = x;
+}
+
+int vector_empty(vector v) {
     assert(v != NULL);
     return v->size == 0;
 }
