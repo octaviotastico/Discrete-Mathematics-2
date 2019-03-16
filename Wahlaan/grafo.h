@@ -13,7 +13,13 @@ Grafo CopiarGrafo(Grafo);
 
 void DestruccionDelGrafo(Grafo);
 
-// queries.c
+// color.c
+
+u32 Greedy(Grafo);
+
+int Bipartito(Grafo);
+
+// query.c
 
 u32 NumeroDeVertices(Grafo);
 

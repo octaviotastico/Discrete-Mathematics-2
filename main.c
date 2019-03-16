@@ -32,5 +32,10 @@ int main() {
 		u32 n = NombreDelVertice(g, i);
 		printf("%u:%u ", c, n);
 	} printf("\n");
+
+	Greedy(g);
+
+	Bipartito(g);
+	
 	return 0;
 }
