@@ -202,18 +202,61 @@ Grafo ConstruccionDelGrafo(void) {
     return G;
 }
 
-// Creates a copy of the given graph for testing purposes.
+// Creates a DEEP copy of the given graph for testing
+// purposes. Returns NULL if something fails.
 Grafo CopiarGrafo(Grafo G) {
     Grafo copy = (Grafo)malloc(sizeof(struct GrafoSt));
     if(copy){
-        memcpy(&G, &copy, sizeof G);
-        //copy->dict = G->dict;
-        //copy->color = G->color;
-        //copy->order = G->order;
-        //copy->n = G->n;
-        //copy->m = G->m;
-        //copy->x = G->x;
-        //copy->g = G->g;
+        
+        copy->n = G->n;
+        copy->m = G->m;
+        copy->x = G->x;
+        copy->g = G->g;
+
+        copy->g = (vector*)malloc(copy->n * sizeof(vector));
+        if(!copy->g) {
+            DestruccionDelGrafo(copy);
+            return NULL;
+        }
+        copy->dict = (u32*)malloc(copy->n * sizeof(u32));
+        if(!copy->dict) {
+            DestruccionDelGrafo(copy);
+            return NULL;
+        }
+        copy->color = (u32*)malloc(copy->n * sizeof(u32));
+        if(!copy->color) {
+            DestruccionDelGrafo(copy);
+            return NULL;
+        }
+        copy->order = (u32*)malloc(copy->n * sizeof(u32));
+        if(!copy->order) {
+            DestruccionDelGrafo(copy);
+            return NULL;
+        }
+
+        fore(i, 0, copy->n) {
+            copy->g[i] = vector_create();
+            if(!copy->g[i]) {
+                DestruccionDelGrafo(G);
+                return NULL;
+            }
+        }
+
+        fore(i, 0, copy->n) {
+            copy->dict[i] = G->dict[i];
+            copy->color[i] = G->color[i];
+            copy->order[i] = G->order[i];
+        }
+
+        fore(i, 0, copy->n) {
+            fore(j, 0, copy->m) {
+                u32 v1 = vector_at(G->g[i], j);
+                if(vector_push_back(copy->g[i], v1)) {
+                    DestruccionDelGrafo(copy);
+                    return NULL;
+                }
+            }
+        }
     }
 
     return copy;
