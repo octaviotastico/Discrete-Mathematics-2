@@ -1,13 +1,21 @@
+// Project includes
 #include "grafo.h"
-#include "vector.h"
 #include "map.h"
+#include "vector.h"
 
+// Struct GrafoSt to save all
+// nodes, edges, and extra info.
 struct GrafoSt {
-    u32 n, m, x;
-    u32 *dict, *color, *order;
-    vector* g;
+    u32 n; // Number of vertex.
+    u32 m; // Number of edges.
+    u32 x; // Number of colors.
+    u32* dict; // Map to nodes.
+    u32* color; // Array with colors.
+    u32* order; // Natural order of vertex.
+    vector* g; // All vertex in the graph.
 };
 
+// Function to read the input to fill the graph.
 char* get_line() {
     char* str = (char*)malloc(sizeof(char));
     if(!str) return str;
@@ -26,6 +34,7 @@ char* get_line() {
     return realloc(str, sizeof(char) * sz);
 }
 
+// Alloc the memory for the graph and initialize it.
 Grafo ConstruccionDelGrafo(void) {
     Grafo G = (Grafo)malloc(sizeof(struct GrafoSt));
     G->n = G->m = G->x = 0;
@@ -62,7 +71,7 @@ Grafo ConstruccionDelGrafo(void) {
         G->m = (G->m * 10u) + line[i++] - '0';
     }
 
-    // ----------------- ALLOCS --------------------- //
+    // ------------------- ALLOCS ------------------- //
 
     // Alloc map and adjacency list
     map m = map_create();
@@ -193,6 +202,7 @@ Grafo ConstruccionDelGrafo(void) {
     return G;
 }
 
+// Creates a copy of the given graph for testing purposes.
 Grafo CopiarGrafo(Grafo G) {
     Grafo copy = (Grafo)malloc(sizeof(struct GrafoSt));
     if(copy){
@@ -209,6 +219,7 @@ Grafo CopiarGrafo(Grafo G) {
     return copy;
 }
 
+// Frees all the memory used by the graph.
 void DestruccionDelGrafo(Grafo G) {
     if(G->g){
         fore(i, 0, G->n)
@@ -216,32 +227,68 @@ void DestruccionDelGrafo(Grafo G) {
                 vector_destroy(G->g[i]);
         
         free(G->g);
-        G->g = NULL;
     }
-    if(G->dict) {
+    if(G->dict)
         free(G->dict);
-        G->dict = NULL;
-    }
-    if(G->color) {
+    if(G->color)
         free(G->color);
-        G->color = NULL;
-    }
-    if(G->order) {
+    if(G->order)
         free(G->order);
-        G->order = NULL;
-    }
     free(G);
-    G = NULL;
 }
 
+// Runs Greedy on graph G.
+u32 Greedy(Grafo G);
+
+// Returns true (1) and color
+// the vertex with 0 & 1 if G
+// is bipartite. Otherwise 0. 
+int Bipartito(Grafo G);
+
+// Returns the number of vertex in G.
 u32 NumeroDeVertices(Grafo G) {
     return G->n;
 }
 
+// Returns the number of edges in G.
 u32 NumeroDeLados(Grafo G) {
     return G->m;
 }
 
+// Returns the number of different colors in G.
 u32 NumeroDeColores(Grafo G) {
     return G->x;
+}
+
+// Returns the number of the vertex in the given position.
+u32 NombreDelVertice(Grafo G, u32 i) {
+    return vector_at(G->g, i);
+}
+
+// Returns the color of the given vertex. Otherwise 2^32-1.
+u32 ColorDelVertice(Grafo G, u32 i) {
+    if(i < G->n)
+        return G->color[i];
+    else
+        return -1;
+}
+
+// Returns the vertex adjacency in the given position.
+u32 GradoDelVertice(Grafo G, u32 i) {
+    if(i < G->n)
+        return vector_size(G->g[i]);
+    else
+        return -1;
+}
+
+// Returns the color of the given neighbour of the given vertex.
+u32 ColorJotaesimoVecino(Grafo G, u32 i,u32 j) {
+    u32 v = vector_at(G->g[i], j + 1); // This returns the j-th neighbour.
+    return ColorDelVertice(G, v /*i + j + 1*/);
+}
+
+// Returns the number of the given neighbour of the given vertex.
+u32 NombreJotaesimoVecino(Grafo G, u32 i,u32 j) {
+    u32 v = vector_at(G->g[i], j + 1);
+    return NombreDelVertice(G, v);
 }
