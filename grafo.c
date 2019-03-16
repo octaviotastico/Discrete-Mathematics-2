@@ -165,11 +165,28 @@ Grafo CopiarGrafo(Grafo G) {
 }
 
 void DestruccionDelGrafo(Grafo G) {
-    fore(i, 0, G->n) {
-        vector_destroy(G->g[i]);
+    if(G->g){
+        fore(i, 0, G->n)
+            if(G->g[i])
+                vector_destroy(G->g[i]);
+        
+        free(G->g);
+        G->g = NULL;
     }
-    free(G->g);
+    if(G->dict) {
+        free(G->dict);
+        G->dict = NULL;
+    }
+    if(G->color) {
+        free(G->color);
+        G->color = NULL;
+    }
+    if(G->order) {
+        free(G->order);
+        G->order = NULL;
+    }
     free(G);
+    G = NULL;
 }
 
 u32 NumeroDeVertices(Grafo G) {
