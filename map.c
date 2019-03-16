@@ -17,9 +17,10 @@ map map_create() {
 }
 
 // Adds an element to the map with it's key and value.
-void map_add(map m, u32 key, u32 value) {
+int map_add(map m, u32 key, u32 value) {
     if(!m->size) {
         tree t = tree_create(key, value);
+        if(!t) return 1;
         m->root = t;
         m->size++;
     } else {
@@ -28,11 +29,13 @@ void map_add(map m, u32 key, u32 value) {
             tree_setValue(n, value);
         else {
             tree t = tree_create(key, value);
+            if(!t) return 1;
             tree_add(n, t);
             m->root = tree_balance(t);
             m->size++;
         }
     }
+    return 0;
 }
 
 // Finds an element in the map given it's key.

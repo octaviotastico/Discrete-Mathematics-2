@@ -10,7 +10,7 @@ typedef struct Map * map;
 // Creates an empty map.
 map map_create();
 // Adds an element to the map with it's key and value.
-void map_add(map, u32, u32);
+int map_add(map, u32, u32);
 // Finds an element in the map given it's key.
 u32* map_find(map, u32);
 // Size of map

@@ -7,13 +7,11 @@ typedef struct Vector* vector;
 
 vector vector_create();
 
-void vector_push_back(vector, u32);
+int vector_push_back(vector, u32);
 
 void vector_pop_back(vector);
 
 u32 vector_at(vector, int);
-
-void vector_set_at(vector v, int i, u32 x);
 
 int vector_empty(vector);
 
