@@ -20,10 +20,9 @@ static u32 tree_height(tree t) {
 		return 0;
     if(t->left && t->right)
         return max(t->left->height, t->right->height) + 1;
-    else if(t->right)
+    if(t->right)
         return t->right->height + 1;
-    else 
-        return t->left->height + 1;
+    return t->left->height + 1;
 }
 
 static int tree_factor(tree t) {
@@ -77,6 +76,9 @@ tree tree_balance(tree t) {
         t->height = tree_height(t);
 
         int balance = tree_factor(t);
+
+        printf("key: %u %u\n", t->key, key);
+        printf("height and factor: %u %d\n", t->height, balance);
 
         // Left Left Case 
         if (balance > 1 && key < t->left->key) {

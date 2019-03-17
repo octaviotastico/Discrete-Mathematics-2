@@ -7,18 +7,21 @@ u32 Greedy(Grafo G) {
 	memset(G->color, ~0u, G->n * sizeof(u32));
 
 	map m = map_create(); G->x = 0;
+
 	if(!m) return 1;
 
 	fore(i, 0, G->n) {
+		printf("BEGIN\n");
 		u32 v = G->order[i], c = 0;
-		fore(j, 0, GradoDelVertice(G, v)) {
-			u32 x = ColorDelVertice(G, j);
+		fore(j, 0, GradoDelVertice(G, i)) {
+			u32 x = ColorJotaesimoVecino(G, i, j);
 			if(x != ~0u) if(map_add(m, x, 0)) return 1;
 		}
 		while(map_find(m, c)) c++;
 		G->color[v] = c;
-		G->x = max(G->x, c);
+		G->x = max(G->x, c + 1);
 		map_clear(m);
+		printf("END\n");
 	}
 	map_destroy(m);
 	return 0;

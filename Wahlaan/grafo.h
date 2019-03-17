@@ -8,7 +8,7 @@ typedef struct GrafoSt* Grafo;
 /* construccion.c */
 
 // Built a graph from stdin
-Grafo ConstruccionDelGrafo(void);
+Grafo ConstruccionDelGrafo(map);
 
 // Deep copy of a graph
 Grafo CopiarGrafo(Grafo);

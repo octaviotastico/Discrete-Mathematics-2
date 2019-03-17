@@ -19,7 +19,7 @@ char* get_line() {
     return realloc(str, sizeof(char) * sz);
 }
 
-Grafo ConstruccionDelGrafo(void) {
+Grafo ConstruccionDelGrafo(map mm) {
     Grafo G = (Grafo)malloc(sizeof(struct GrafoSt));
     G->n = G->m = G->x = 0;
     G->dict = G->color = G->order = NULL;
@@ -129,6 +129,8 @@ Grafo ConstruccionDelGrafo(void) {
 
         // Add them to map
 
+        map_add(mm, -max(-u[i], -v[i]), max(u[i], v[i]));
+
         if(map_add(m, u[i], 0) || map_add(m, v[i], 0)) {
             free(line);
             free(m), free(u), free(v);
@@ -224,7 +226,6 @@ Grafo CopiarGrafo(Grafo G) {
     return copy;
 }
 
-// Frees all the memory used by the graph.
 void DestruccionDelGrafo(Grafo G) {
     if(G->g){
         fore(i, 0, G->n)

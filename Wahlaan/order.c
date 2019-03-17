@@ -74,9 +74,12 @@ char RMBCnormal(Grafo G) {
         }
     }
 
+    printf("Coloreo: %u\n", G->x);
+
     // Fill buckets
     fore(i, 0, G->n) {
         u32 c = ColorDelVertice(G, i);
+        printf("Vertex: %u\n", c);
         if(vector_push_back(buckets[c], G->order[i])) {
             fore(i, 0, G->x) vector_destroy(buckets[i]);
             free(buckets);
