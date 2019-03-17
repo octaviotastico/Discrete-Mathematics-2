@@ -114,7 +114,7 @@ char RMBCchicogrande(Grafo G) {
     if(RMBCnormal(G)) return 1;
 
     // Now we can count for every color, how many of them there are
-    u32* count = (u32*)malloc(G->x * sizeof(u32));
+    u32* count = (u32*)calloc(G->x, sizeof(u32));
     if(!count) return 1;
 
     u32 maxcount = 0;
@@ -134,6 +134,7 @@ char RMBCchicogrande(Grafo G) {
         buckets[i] = vector_create();
         if(!buckets[i]) {
             fore(j, 0, i) vector_destroy(buckets[i]);
+            free(count);
             free(buckets);
             return 1;
         }
@@ -145,6 +146,7 @@ char RMBCchicogrande(Grafo G) {
         u32 cc = count[c];
         if(vector_push_back(buckets[cc - 1], G->order[i])) {
             fore(i, 0, maxcount) vector_destroy(buckets[i]);
+            free(count);
             free(buckets);
             return 1;
         }
@@ -159,6 +161,7 @@ char RMBCchicogrande(Grafo G) {
         vector_destroy(buckets[j]);
     }
 
+    free(count);
     free(buckets);
 
     return 0;

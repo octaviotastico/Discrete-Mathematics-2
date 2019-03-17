@@ -4,24 +4,28 @@
 #include "grafo.c"
 
 u32 Greedy(Grafo G) {
-	memset(G->color, -1, sizeof(G->color));
+	memset(G->color, ~0u, G->n * sizeof(u32));
 
 	map m = map_create(); G->x = 0;
+	if(!m) return 1;
+
 	fore(i, 0, G->n) {
 		u32 v = G->order[i], c = 0;
 		fore(j, 0, GradoDelVertice(G, v)) {
-			u32 n = NombreJotaesimoVecino(G, v, j);
-			map_add(m, ColorDelVertice(G, j), ColorDelVertice(G, j));
+			u32 x = ColorDelVertice(G, j);
+			if(x != ~0u) if(map_add(m, x, 0)) return 1;
 		}
 		while(map_find(m, c)) c++;
-		G->x = (c > G->x) ? c : G->x;
 		G->color[v] = c;
+		G->x = max(G->x, c);
 		map_clear(m);
 	}
+	map_destroy(m);
+	return 0;
 }
 
 int Bipartito(Grafo G) {
-	memset(G->color, -1, sizeof(G->color));
+	memset(G->color, -1, G->n * sizeof(u32));
 	vector stack = vector_create();
 
 	u32 v = G->order[0];
@@ -31,14 +35,19 @@ int Bipartito(Grafo G) {
 	while(!vector_empty(stack)) {
 		v = vector_pop_back(stack);
 		fore(i, 0, GradoDelVertice(G, v)) {
-			u32 n = NombreJotaesimoVecino(G, v, i);
+			u32 n = vector_at(G->g[v], i);
 			if(G->color[n] == G->color[v]) {
+				vector_destroy(stack);
 				Greedy(G);
 				return 0;
 			}
-			if(G->color[n] == -1) G->color[n] = (G->color[v] + 1) % 2, vector_push_back(stack, n);
+			if(G->color[n] == ~0u) {
+				G->color[n] = (G->color[v] + 1) % 2;
+				vector_push_back(stack, n);
+			}
 		}
 	}
+	vector_destroy(stack);
 	return 1;
 }
 

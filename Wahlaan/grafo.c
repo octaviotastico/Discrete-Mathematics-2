@@ -4,7 +4,7 @@
 #include "grafo.h"
 
 struct GrafoSt {
-    u32 n; // Number of vertex.
+    u32 n; // Number of verteces.
     u32 m; // Number of edges.
     u32 x; // Number of colors.
     u32* dict; // Map to nodes.

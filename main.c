@@ -3,14 +3,8 @@
 int main() {
 	Grafo g = ConstruccionDelGrafo();
 
-	OrdenWelshPowell(g);
-
 	u32 n = NumeroDeVertices(g);
 
-	fore(i, 0, n) {
-		u32 w = GradoDelVertice(g, i);
-		printf("%u ", w);
-	} printf("\n");
 
 	RMBCnormal(g);
 	fore(i, 0, n) {
@@ -36,6 +30,8 @@ int main() {
 	Greedy(g);
 
 	Bipartito(g);
+
+	DestruccionDelGrafo(g);
 	
 	return 0;
 }

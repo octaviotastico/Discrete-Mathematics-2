@@ -2,11 +2,10 @@
 
 struct Vector {
     u32* array;
-    size_t size;
-    size_t capacity;
+    size_t size, capacity;
 };
 
-static int vector_resize(vector v, size_t cap) {
+static u32 vector_resize(vector v, size_t cap) {
     v->array = (u32*)realloc(v->array, cap * sizeof(u32));
     if(!v->array) return 1;
     return 0;
@@ -20,15 +19,14 @@ vector vector_create() {
     return v;
 }
 
-int vector_push_back(vector v, u32 x) {
+u32 vector_push_back(vector v, u32 x) {
     assert(v != NULL);
     if(v->size == v->capacity) {
         if(!v->capacity) v->capacity++;
         else v->capacity *= 2;
 
-        if(vector_resize(v, v->capacity)) {
+        if(vector_resize(v, v->capacity))
             return 1;
-        }
     }
     v->array[v->size++] = x;
 
@@ -36,35 +34,32 @@ int vector_push_back(vector v, u32 x) {
 }
 
 u32 vector_pop_back(vector v) {
-    assert(v != NULL);
-    v->size--;
-    if(2 * v->size == v->capacity) {
-        v->capacity /= 2;
-        vector_resize(v, v->capacity);
-    }
-    return v->array[v->size + 1];
+    assert(v != NULL && 0 < v->size);
+    return v->array[--v->size];
 }
 
-u32 vector_at(vector v, int i) {
+u32 vector_at(vector v, u32 i) {
+    assert(v != NULL && i < v->size);
     return v->array[i];
 }
 
-int vector_empty(vector v) {
+u32 vector_empty(vector v) {
     assert(v != NULL);
     return v->size == 0;
 }
 
 void vector_clear(vector v) {
     assert(v != NULL);
-    free(v->array);
     v->size = 0;
     v->capacity = 0;
+    free(v->array);
+    v->array = NULL;
 }
 
 void vector_destroy(vector v) {
     assert(v != NULL);
     vector_clear(v);
-    free(v); v = NULL;
+    free(v);
 }
 
 size_t vector_size(vector v) {

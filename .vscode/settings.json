@@ -3,6 +3,14 @@
         "vector": "c",
         "chrono": "c",
         "limits": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "array": "c",
+        "string_view": "c",
+        "istream": "c",
+        "ostream": "c",
+        "ratio": "c",
+        "type_traits": "c",
+        "initializer_list": "c",
+        "utility": "c"
     }
 }

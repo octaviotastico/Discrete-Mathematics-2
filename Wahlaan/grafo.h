@@ -5,12 +5,15 @@
 
 typedef struct GrafoSt* Grafo;
 
-// grafo.c
+/* construccion.c */
 
+// Built a graph from stdin
 Grafo ConstruccionDelGrafo(void);
 
+// Deep copy of a graph
 Grafo CopiarGrafo(Grafo);
 
+// Destroy a graph and free its memory
 void DestruccionDelGrafo(Grafo);
 
 // color.c

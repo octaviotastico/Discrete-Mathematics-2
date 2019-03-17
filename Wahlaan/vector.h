@@ -7,13 +7,13 @@ typedef struct Vector* vector;
 
 vector vector_create();
 
-int vector_push_back(vector, u32);
+u32 vector_push_back(vector, u32);
 
 u32 vector_pop_back(vector);
 
-u32 vector_at(vector, int);
+u32 vector_at(vector, u32);
 
-int vector_empty(vector);
+u32 vector_empty(vector);
 
 void vector_clear(vector);
 
