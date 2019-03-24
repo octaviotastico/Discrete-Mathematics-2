@@ -22,6 +22,6 @@ typedef unsigned int u32;
 #include "tree.h"
 
 #define fore(i, s, e) for(u32 i = s; i < (u32)e; i++)
-#define max(a, b) (a > b) ? a : b 
+#define max(a, b) ((a > b) ? a : b)
 
 #endif

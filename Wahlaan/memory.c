@@ -19,7 +19,7 @@ char* get_line() {
     return realloc(str, sizeof(char) * sz);
 }
 
-Grafo ConstruccionDelGrafo(map mm) {
+Grafo ConstruccionDelGrafo() {
     Grafo G = (Grafo)malloc(sizeof(struct GrafoSt));
     G->n = G->m = G->x = 0;
     G->dict = G->color = G->order = NULL;
@@ -81,7 +81,6 @@ Grafo ConstruccionDelGrafo(map mm) {
     u32* v = (u32*)calloc(G->m, sizeof(u32));
 
     // Alloc memory por dictionary, array of colors and order
-
     G->dict  = (u32*)malloc(G->n * sizeof(u32));
     G->color = (u32*)malloc(G->n * sizeof(u32));
     G->order = (u32*)malloc(G->n * sizeof(u32));
@@ -127,10 +126,6 @@ Grafo ConstruccionDelGrafo(map mm) {
             v[i] = v[i] * 10u + line[j++] - '0';
         }
 
-        // Add them to map
-
-        map_add(mm, -max(-u[i], -v[i]), max(u[i], v[i]));
-
         if(map_add(m, u[i], 0) || map_add(m, v[i], 0)) {
             free(line);
             free(m), free(u), free(v);
@@ -144,7 +139,7 @@ Grafo ConstruccionDelGrafo(map mm) {
     if(map_size(m) != G->n) {
         free(m), free(u), free(v);
         DestruccionDelGrafo(G);
-        printf("Cantidad de vertices leidos no es la declarada\n");
+        printf("Cantidad de vértices leidos no es la declarada\n");
         return NULL;
     }
 

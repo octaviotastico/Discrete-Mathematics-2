@@ -38,11 +38,16 @@ char OrdenWelshPowell(Grafo G) {
 
     // Fill order
     int i = 0;
-    for(u32 j = G->n - 1u; j < G->n; j--) {
+    fore(j, 0, G->n) {
         fore(k, 0, vector_size(buckets[j])) {
             G->order[i++] = vector_at(buckets[j], k);
         }
         vector_destroy(buckets[j]);
+    }
+
+    // We reverse the order in O(n)
+    fore(i, 0, G->n / 2) {
+        if(SwitchVertices(G, i, G->n - i - 1)) return 1;
     }
 
     free(buckets);
@@ -74,12 +79,9 @@ char RMBCnormal(Grafo G) {
         }
     }
 
-    printf("Coloreo: %u\n", G->x);
-
     // Fill buckets
     fore(i, 0, G->n) {
         u32 c = ColorDelVertice(G, i);
-        printf("Vertex: %u\n", c);
         if(vector_push_back(buckets[c], G->order[i])) {
             fore(i, 0, G->x) vector_destroy(buckets[i]);
             free(buckets);

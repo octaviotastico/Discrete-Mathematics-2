@@ -9,20 +9,19 @@ tree tree_create(u32 key, u32 value) {
     tree t = (tree)malloc(sizeof(struct Tree));
     t->key = key;
     t->value = value;
-    t->height = 0;
+    t->height = 1;
     t->parent = t->right = t->left = NULL;
 
     return t;
 }
 
-static u32 tree_height(tree t) {
-	if(!t || (!t->left && !t->right))
-		return 0;
-    if(t->left && t->right)
-        return max(t->left->height, t->right->height) + 1;
-    if(t->right)
-        return t->right->height + 1;
-    return t->left->height + 1;
+static int tree_height(tree t) {
+    if(!t) return 0;
+    return t->height;
+}
+
+static void tree_set_height(tree t) {
+    t->height = max(tree_height(t->left), tree_height(t->right)) + 1;
 }
 
 static int tree_factor(tree t) {
@@ -44,8 +43,8 @@ static void tree_rotateR(tree Q) {
 
     Q->parent = P;
 
-    Q->height = tree_height(Q);
-    P->height = tree_height(P);
+    tree_set_height(Q);
+    tree_set_height(P);
 }
 
 static void tree_rotateL(tree P) { 
@@ -64,41 +63,39 @@ static void tree_rotateL(tree P) {
 
     P->parent = Q;
 
-    P->height = tree_height(P);
-    Q->height = tree_height(Q);
+    tree_set_height(P);
+    tree_set_height(Q);
 }
 
 tree tree_balance(tree t) {
     u32 key = t->key;
     tree root = NULL;
 
+    // printf("BEGIN\n");
+
     while(t) {
-        t->height = tree_height(t);
+        tree_set_height(t);
 
         int balance = tree_factor(t);
-
-        printf("key: %u %u\n", t->key, key);
-        printf("height and factor: %u %d\n", t->height, balance);
 
         // Left Left Case 
         if (balance > 1 && key < t->left->key) {
             tree_rotateR(t);
+            t = t->parent;
         }
-    
         // Right Right Case 
         else if (balance < -1 && key > t->right->key) {
             tree_rotateL(t);
+            t = t->parent;
         }
-    
         // Left Right Case 
-        else if (balance > 1 && key > t->left->key) { 
+        else if (balance > 1 && key > t->left->key) {
             tree_rotateL(t->left);
             tree_rotateR(t);
             t = t->parent;
         } 
-    
         // Right Left Case 
-        else if (balance < -1 && key < t->right->key) { 
+        else if (balance < -1 && key < t->right->key) {
             tree_rotateR(t->right);
             tree_rotateL(t);
             t = t->parent;

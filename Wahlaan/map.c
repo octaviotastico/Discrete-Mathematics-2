@@ -1,5 +1,5 @@
-#include "map.h"
 
+#include "map.h"
 
 // Map structure used to keep track
 // of the nodes in the graph.
