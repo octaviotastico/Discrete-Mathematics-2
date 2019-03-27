@@ -14,11 +14,11 @@ $(ODIR)/%.o: %.c
 $(BDIR)/%: $(ODIR)/%.o $(ODIR)/order_check.o
 	$(CC) -o $@ $^ $(CFLAGS) $(IDIR)/*.c
 
-general: $(BDIR)/test
-	./$(BDIR)/test
+general: $(BDIR)/general
+	./$(BDIR)/general
 
 %.v: $(BDIR)/%
-	valgrind --show-reachable=yes --leak-check=full $(BDIR)/$(subst .valgrind,,$@)
+	valgrind --show-reachable=yes --leak-check=full $(BDIR)/$(subst .v,,$@)
 
 .PRECIOUS: $(ODIR)/%.o
 
