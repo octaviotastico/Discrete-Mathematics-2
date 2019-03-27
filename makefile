@@ -1,7 +1,7 @@
 IDIR := Wahlaan
+TDIR := tests
 ODIR := obj
 BDIR := bin
-TDIR := tests
 
 VPATH = $(IDIR):$(TDIR)
 
@@ -14,8 +14,11 @@ $(ODIR)/%.o: %.c
 $(BDIR)/%: $(ODIR)/%.o $(ODIR)/order_check.o
 	$(CC) -o $@ $^ $(CFLAGS) $(IDIR)/*.c
 
-general: $(BDIR)/test
-	./$(BDIR)/test
+general: $(BDIR)/general
+	./$(BDIR)/general
+
+tests: $(BDIR)/tests
+	./$(BDIR)/tests
 
 %.v: $(BDIR)/%
 	valgrind --show-reachable=yes --leak-check=full $(BDIR)/$(subst .valgrind,,$@)
