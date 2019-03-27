@@ -1,21 +1,25 @@
-IDIR := Wahlaan
-TDIR := tests
-ODIR := obj
 BDIR := bin
+IDIR := Wahlaan
+LDIR := tests/lib
+ODIR := obj
+TDIR := tests
 
 VPATH = $(IDIR):$(TDIR)
 
 CC := gcc
-CFLAGS := -g -I$(IDIR) -Wall -Wextra -O3 -std=c99
+CFLAGS := -g -I$(IDIR) -I$(LDIR) -Wall -Wextra -O3 -std=c99
+
+_LIB = order_check.c
+LIB = $(patsubst %, $(LDIR)/%, $(_LIB))
 
 $(ODIR)/%.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-$(BDIR)/%: $(ODIR)/%.o $(ODIR)/order_check.o
+$(BDIR)/%: $(ODIR)/%.o $(LIB)
 	$(CC) -o $@ $^ $(CFLAGS) $(IDIR)/*.c
 
-general: $(BDIR)/general
-	./$(BDIR)/general
+penazzi: $(BDIR)/penazzi
+	./$(BDIR)/penazzi
 
 tests: $(BDIR)/tests
 	./$(BDIR)/tests
