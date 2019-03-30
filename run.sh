@@ -15,7 +15,11 @@ while [ true ]; do
     read -p "" sample
 
     # Compile and run test with sample
-    make $test <samples/$sample
+    make $test INPUT="samples/$sample" OUTPUT="out/$sample"
+
+    cat ans/$sample | while read line; do
+        echo $line
+    done
 
     read -p "Press any key to continue..."
 

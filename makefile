@@ -4,25 +4,29 @@ LDIR := tests/lib
 ODIR := obj
 TDIR := tests
 
-VPATH = $(IDIR):$(TDIR)
+VPATH = $(IDIR):$(TDIR):$(LDIR)
+
+INPUT = ""
+OUTPUT = ""
 
 CC := gcc
 CFLAGS := -g -I$(IDIR) -I$(LDIR) -Wall -Wextra -O3 -std=c99
 
-_LIB = ochecks.c pchecks.c
-LIB = $(patsubst %, $(LDIR)/%, $(_LIB))
+# Headers
+LIB = Rii.h grafo.h map.h tree.h vector.h checks.h
+
+# Objects
+_OBJ = color.o grafo.o map.o memory.o order.o query.o tree.o vector.o checks.o
+OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 
 $(ODIR)/%.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-$(BDIR)/%: $(ODIR)/%.o $(LIB)
-	$(CC) -o $@ $^ $(CFLAGS) $(IDIR)/*.c
+$(BDIR)/%: $(ODIR)/%.o $(OBJ) $(LIB)
+	$(CC) -o $@ $^ $(CFLAGS)
 
 penazzi: $(BDIR)/penazzi
-	./$(BDIR)/penazzi
-
-tests: $(BDIR)/tests
-	./$(BDIR)/tests
+	./$(BDIR)/penazzi <$(INPUT) >$(OUTPUT)
 
 %.v: $(BDIR)/%
 	valgrind --show-reachable=yes --leak-check=full $(BDIR)/$(subst .v,,$@)

@@ -127,7 +127,7 @@ char RMBCchicogrande(Grafo G) {
     fore(i, 0, G->n) {
         u32 c = ColorDelVertice(G, i);
         count[c]++;
-        maxcount = max(count[c], maxcount);
+        maxcount = max(maxcount, count[c]);
     }
 
     // Now we create new buckets, using the count array to distribute
