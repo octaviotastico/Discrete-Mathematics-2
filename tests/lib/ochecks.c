@@ -1,6 +1,6 @@
-#include "order_check.h"
+#include "checks.h"
 
-int doNatural(Grafo g) {
+void doNatural(Grafo g) {
 	u32 n = NumeroDeVertices(g);
     // Natural order
 	OrdenNatural(g);
@@ -9,13 +9,12 @@ int doNatural(Grafo g) {
 	fore(i, 1, n) {
 		u32 v = NombreDelVertice(g, i);
         // Check if a[i] < a[i + 1]
-		if(v <= ant) return 1;
+		assert(ant < v);
 		ant = v;
 	}
-    return 0;
 }
 
-int doWelsh(Grafo g) {
+void doWelsh(Grafo g) {
 	u32 n = NumeroDeVertices(g);
     // Welsh order
 	OrdenWelshPowell(g);
@@ -24,55 +23,50 @@ int doWelsh(Grafo g) {
 	fore(i, 1, n) {
 		u32 v = GradoDelVertice(g, i);
         // Check that d(a[i]) >= d(a[i + 1])
-		if(ant < v) return 1;
+		assert(ant >= v);
 		ant = v;
 	}
-    return 0;
 }
 
-int doRMBC(Grafo g) {
+void doRMBC(Grafo g) {
 	u32 n = NumeroDeVertices(g);
     // RMBC order
 	RMBCnormal(g);
     // Current color
 	u32 c = ColorDelVertice(g, 0);
     // Must be zero
-    if(c != 0) return 1;
+    assert(c == 0);
 	fore(i, 1, n) {
 		u32 x = ColorDelVertice(g, i);
         // Next color = current color + 1
 		if(x == c + 1) c = x;
         // Check the above
-		if(x != c) return 1;
+		assert(x == c);
 	}
     // Using every color?
-    if(c + 1 != NumeroDeColores(g)) return 1;
-
-    return 0;
+	assert(c + 1 == NumeroDeColores(g));
 }
 
-int doRMBCr(Grafo g) {
+void doRMBCr(Grafo g) {
 	u32 n = NumeroDeVertices(g);
     // RMBC-reverse order
 	RMBCrevierte(g);
     // Current color
 	u32 c = ColorDelVertice(g, 0);
     // Must be the last possible color
-    if(c + 1 != NumeroDeColores(g)) return 1;
+	assert(c + 1 == NumeroDeColores(g));
 	fore(i, 1, n) {
 		u32 x = ColorDelVertice(g, i);
         // Next color = current color + 1
 		if(x == c - 1) c = x;
         // Check the above
-		if(x != c) return 1;
+		assert(x == c);
 	}
     // Using every color?
-	if(c != 0) return 1;
-
-    return 0;
+	assert(c == 0);
 }
 
-int doRMBCc(Grafo g) {
+void doRMBCc(Grafo g) {
 	u32 n = NumeroDeVertices(g);
     // RMBC-by-size order
 	RMBCchicogrande(g);
@@ -90,17 +84,11 @@ int doRMBCc(Grafo g) {
 		u32 x = ColorDelVertice(g, i);
 		if(x != c) {
             // Check if new color has already appeared
-			if(arr[x] == 1) {
-                free(arr);
-                return 1;
-            }
+			assert(arr[x] == 0);
             // Mark this color as used
 			arr[x] = 1;
             // Check |Vi| <= |Vj|
-			if(Vi < Vj) {
-                free(arr);
-                return 1;
-            }
+			assert(Vj >= Vi);
             // Previous color count = current color count
 			Vj = Vi;
             // New color
@@ -112,6 +100,5 @@ int doRMBCc(Grafo g) {
 		Vi++;
 	}
     free(arr);
-	if(d != NumeroDeColores(g)) return 1;
-	return 0;
+	assert(d == NumeroDeColores(g));
 }

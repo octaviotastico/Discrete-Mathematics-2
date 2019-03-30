@@ -9,7 +9,7 @@ VPATH = $(IDIR):$(TDIR)
 CC := gcc
 CFLAGS := -g -I$(IDIR) -I$(LDIR) -Wall -Wextra -O3 -std=c99
 
-_LIB = order_check.c
+_LIB = ochecks.c pchecks.c
 LIB = $(patsubst %, $(LDIR)/%, $(_LIB))
 
 $(ODIR)/%.o: %.c
