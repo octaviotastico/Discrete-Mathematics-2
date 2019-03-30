@@ -20,16 +20,16 @@ _OBJ = color.o grafo.o map.o memory.o order.o query.o tree.o vector.o checks.o
 OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 
 $(ODIR)/%.o: %.c
-	$(CC) -c -o $@ $< $(CFLAGS)
+	@$(CC) -c -o $@ $< $(CFLAGS)
 
 $(BDIR)/%: $(ODIR)/%.o $(OBJ) $(LIB)
-	$(CC) -o $@ $^ $(CFLAGS)
+	@$(CC) -o $@ $^ $(CFLAGS)
 
 penazzi: $(BDIR)/penazzi
-	./$(BDIR)/penazzi <$(INPUT) >$(OUTPUT)
+	@./$(BDIR)/penazzi <$(INPUT) >$(OUTPUT)
 
 %.v: $(BDIR)/%
-	valgrind --show-reachable=yes --leak-check=full $(BDIR)/$(subst .v,,$@)
+	@valgrind --show-reachable=yes --leak-check=full $(BDIR)/$(subst .v,,$@)
 
 .PRECIOUS: $(ODIR)/%.o
 

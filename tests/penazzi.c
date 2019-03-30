@@ -46,7 +46,7 @@ void correrRMBC(Grafo g, int times) {
 		doGreedy(g);
 		x = min(x, NumeroDeColores(g));
 	}
-	fprintf(stdout, "%u\n", x);
+	fprintf(stdout, "%u", x);
 }
 
 int main() {
