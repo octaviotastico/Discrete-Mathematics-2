@@ -49,14 +49,19 @@ void correrRMBC(Grafo g, int times) {
 	fprintf(stdout, "%u", x);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+	
+	if(argc < 3) return -1;
 
+	int sw = atoi(argv[1]);
+	int rm = atoi(argv[2]);
+	
 	Grafo g = ConstruccionDelGrafo();
 
 	correrNatural(g);
 	correrWelsh(g);
-	correrSwitch(g, 100);
-	correrRMBC(g, 1000);
+	correrSwitch(g, sw);
+	correrRMBC(g, rm);
 	
 	DestruccionDelGrafo(g);
 	return 0;
