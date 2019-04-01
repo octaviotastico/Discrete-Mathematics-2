@@ -19,7 +19,7 @@ CFLAGS := -g -I$(IDIR) -I$(LDIR) -Wall -Wextra -O3 -std=c99
 LIB = Rii.h grafo.h map.h tree.h vector.h checks.h
 
 # Objects
-_OBJ = color.o grafo.o map.o memory.o order.o query.o tree.o vector.o checks.o
+_OBJ = color.o grafo.o map.o build.o order.o query.o tree.o vector.o checks.o
 OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 
 $(ODIR)/%.o: %.c

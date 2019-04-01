@@ -1,22 +1,41 @@
 #include "grafo.c"
 
-char* get_line() {
-    char* str = (char*)malloc(sizeof(char));
-    if(!str) return str;
+static char* get_line(char* line) {
+    // Wipe previous line
+    if(line) free(line);
+
+    // Alloc space for line
+    line = (char*)malloc(sizeof(char));
+    if(!line) return line;
 
     size_t sz = 0, cap = 1;
 
-    char ch;
-    while(EOF != (ch = fgetc(stdin)) && ch != '\n') {
-        str[sz++] = ch;
+    char c;
+    while(EOF != (c = fgetc(stdin)) && c != '\n' && c != '\r') {
+        line[sz++] = c;
         if(sz == cap) {
-            str = realloc(str, sizeof(char) * (cap *= 2));
-            if(!str) return str;
+            line = realloc(line, sizeof(char) * (cap *= 2));
+            if(!line) return line;
         }
     }
-    str[sz++] = '\0';
 
-    return realloc(str, sizeof(char) * sz);
+    // Add null character to line
+    line[sz++] = '\0';
+
+    // Give the line its real size
+    return realloc(line, sizeof(char) * sz);
+}
+
+static void free_resources(Grafo g, char* line, map m, u32* u, u32* v) {
+    // Destroy graph
+    if(g) DestruccionDelGrafo(g);
+    // Destroy buffer-input
+    if(line) free(line);
+    // Destroy map
+    if(m) map_destroy(m);
+    // Destroy edges
+    if(u) free(u);
+    if(v) free(v);
 }
 
 Grafo ConstruccionDelGrafo() {
@@ -27,10 +46,9 @@ Grafo ConstruccionDelGrafo() {
 
     char* line = NULL;
 
-    // Read comments
+    // ----------------- READ COMMENTS ----------------- //
     do {
-        if(line) free(line);
-        line = get_line();
+        line = get_line(line);
         if(!line) {
             DestruccionDelGrafo(G);
             printf("Fallo al leer\n");
@@ -38,27 +56,37 @@ Grafo ConstruccionDelGrafo() {
         }
     } while(line[0] == 'c');
 
-    // Check if this line is in the form 'p edge n m'
-    if(memcmp(line, "p edge", 6)) {
-        free(line);
-        DestruccionDelGrafo(G);
+    // ---------------- READ p edge n m ---------------- //
+
+    // Compare the first part
+    if(memcmp(line, "p edge ", 7)) {
+        free_resources(G, line, NULL, NULL, NULL);
         printf("Error en primera linea sin comentario\n");
         return NULL;
     }
 
-    // Get n and m (n starts at position 7)
-    int i = 7;
-    while(line[i] != ' ') {
+    // Start looking at pos 7
+    u32 i = 7;
+
+    // Read n
+    while('0' <= line[i] && line[i] <= '9') {
         G->n = G->n * 10u + line[i++] - '0';
     }
-    i++;
-    while(line[i] != '\0') {
+
+    // Advance to m
+    while('0' > line[i] || line[i] > '9') {
+        if(line[i] == '\0') {
+            free_resources(G, line, NULL, NULL, NULL);
+            printf("Error en primera linea sin comentario\n");
+        } else i++;
+    }
+
+    // Read m
+    while('0' <= line[i] && line[i] <= '9') {
         G->m = G->m * 10u + line[i++] - '0';
     }
 
-    free(line);
-
-    // ------------------- ALLOCS ------------------- //
+    // ---------------- ALLOC RESOURCES ---------------- //
 
     // Alloc map and adjacency list
     map m = map_create();
@@ -68,9 +96,7 @@ Grafo ConstruccionDelGrafo() {
     fore(i, 0, G->n) {
         G->g[i] = vector_create();
         if(!G->g[i]) {
-            free(line);
-            if(m) free(m);
-            DestruccionDelGrafo(G);
+            free_resources(G, line, m, NULL, NULL);
             printf("Fallo al reservar memoria para el vector %d", i);
             return NULL;
         }
@@ -86,59 +112,60 @@ Grafo ConstruccionDelGrafo() {
     G->order = (u32*)malloc(G->n * sizeof(u32));
 
     if(!m || !u || !v || !G->dict || !G->color || !G->order) {
-        free(line);
-        if(m) free(m);
-        if(u) free(u);
-        if(v) free(v);
-        DestruccionDelGrafo(G);
+        free_resources(G, line, m, u, v);
         printf("Fallo al reservar memoria\n");
         return NULL;
     }
+    
+    // ------------------ READ EDGES ------------------ //
 
-    // ------------------------------------------------- //
-
-    // Receive m edges
     fore(i, 0, G->m) {
-        line = get_line();
+        line = get_line(line);
         if(!line) {
-            free(m), free(u), free(v);
-            DestruccionDelGrafo(G);
+            free_resources(G, line, m, u, v);
             printf("Fallo al leer\n");
             return NULL;
         }
-        // Check that the line is in the form 'e u v'
-        if(line[0] != 'e') {
-            free(line);
-            free(m), free(u), free(v);
-            DestruccionDelGrafo(G);
+
+        // Compare the first part
+        if(memcmp(line, "e ", 2)) {
+            free_resources(G, line, m, u, v);
             printf("Error de lectura en lado %i\n", i + 1);
             return NULL;
         }
 
-        // Read u and v
-        int j = 2;
-        while(line[j] != ' ') {
+        // Start lookin at position 2
+        u32 j = 2;
+
+        // Read u
+        while('0' <= line[j] && line[j] <= '9') {
             u[i] = u[i] * 10u + line[j++] - '0';
         }
-        while(line[++j] == ' ');
 
-        while(line[j] != '\0') {
+        // Advance to v
+        while('0' > line[j] || line[j] > '9') {
+            if(line[j] == '\0') {
+                free_resources(G, line, m, u, v);
+                printf("Error de lectura en lado %i\n", i + 1);
+            } else j++;
+        }
+
+        // Read v
+        while('0' <= line[j] && line[j] <= '9') {
             v[i] = v[i] * 10u + line[j++] - '0';
         }
 
+        // Add {u[i], 0} and {v[i], 0}
         if(map_add(m, u[i], 0) || map_add(m, v[i], 0)) {
-            free(line);
-            free(m), free(u), free(v);
-            DestruccionDelGrafo(G);
+            free_resources(G, line, m, u, v);
             printf("Fallo al agregar un nodo al mapa\n");
             return NULL;
         }
-        free(line);
     }
 
+    // Check G->n matches
     if(map_size(m) != G->n) {
-        free(m), free(u), free(v);
-        DestruccionDelGrafo(G);
+        free_resources(G, line, m, u, v);
         printf("Cantidad de vértices leidos no es la declarada\n");
         return NULL;
     }
@@ -153,7 +180,7 @@ Grafo ConstruccionDelGrafo() {
     // Map the smallest vertex to 0, the second smallest to 1, ..., the greatest to n - 1
     map_sort(m);
 
-    // Construct the adjacency list
+    // Construct adjacency list
     fore(i, 0, G->m) {
         // Find the mapping of u and v
         u32 real_u = *map_find(m, u[i]);
@@ -163,19 +190,18 @@ Grafo ConstruccionDelGrafo() {
         G->dict[real_u] = u[i];
         G->dict[real_v] = v[i];
 
-        // Push the edges (u -> v and u <- v)
+        // Push the edges (real_u -> real_v and real_u <- real_v)
         if(vector_push_back(G->g[real_u], real_v) || vector_push_back(G->g[real_v], real_u)) {
-            free(m), free(u), free(v);
-            DestruccionDelGrafo(G);
+            free_resources(G, line, m, u, v);
             printf("Fallo al crear una arista\n");
             return NULL;
         }
     }
 
-    free(u); free(v);
-
-    map_destroy(m);
+    // Free resources
+    free_resources(NULL, line, m, u, v);
     
+    // Return graph
     return G;
 }
 

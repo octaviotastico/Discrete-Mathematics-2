@@ -57,7 +57,6 @@ int main(int argc, char *argv[]) {
 	int rm = atoi(argv[2]);
 	
 	Grafo g = ConstruccionDelGrafo();
-
 	correrNatural(g);
 	correrWelsh(g);
 	correrSwitch(g, sw);
