@@ -1,6 +1,9 @@
+# Imports
 import sys
 import os
 
+# Search for the projects folders.
+# Creates them if they don't exist.
 try:
     os.stat('bin')
 except:
@@ -11,32 +14,39 @@ try:
 except:
     os.mkdir('obj')
 
-outdir = 'out/'
-try:
-    os.stat(outdir)
-except:
-    os.mkdir(outdir)
+# Command line arguments
+test = sys.argv[1] # Either 'performance' or 'penazzi'
+sample = sys.argv[2] # Graph selection
 
-ansdir = 'ans/'
+# Input file
+inp = 'samples/' + sample
 
+if test == 'performance':
 
-# Command line arguments test and sample
-test = sys.argv[1]
-sample = sys.argv[2]
+    # Output and Answer directories.
+    out = 'out/performance'
+    ans = 'ans/performance'
 
-_, dest = sample.split('/', 1)
+    # Search for the output folders.
+    # Creates them if they don't exist.
+    try:
+        os.stat(out)
+    except:
+        os.mkdir(out)
+    
+    try:
+        os.stat(ans)
+    except:
+        os.mkdir(ans)
+    
+    ans += '/' + sample
+    out += '/' + sample
 
-# Three important files
-inp = sample
-out = outdir + dest
-ans = ansdir + dest
+    try:
+        os.mknod(out, 777)
+    except:
+        pass
 
-try:
-    os.stat(out)
-except:
-    os.touch(out)
-
-if 'performance' in test:
     # Command for performance test
     command = ['make', test, 'SWITCH=', 'RMBC=', 'INPUT=', 'OUTPUT=']
 
@@ -70,8 +80,39 @@ if 'performance' in test:
     print('Penazzi time: ' + answers.readline())
     print('Your time: ' + output.readline())
 
+    answers.close()
+    output.close()
 
-if 'penazzi' in test:
+
+if test == 'penazzi':
+
+    # Output and Answer directories.
+    out = 'out/penazzi'
+    ans = 'ans/penazzi'
+
+    # Search for the output folders.
+    # Creates them if they don't exist.
+    try:
+        os.stat(out)
+    except:
+        os.mkdir(out)
+    
+    try:
+        os.stat(ans)
+    except:
+        os.mkdir(ans)
+    
+    ans += '/' + sample
+    out += '/' + sample
+
+    print(ans)
+    print(out)
+
+    try:
+        os.mknod(out, 777)
+    except:
+        pass
+
     # Command for penazzi test
     command = ['make', test, 'SWITCH=', 'RMBC=', 'INPUT=', 'OUTPUT=']
     args = [inp, out]
@@ -109,3 +150,9 @@ if 'penazzi' in test:
 
     checks = '\n'.join(checks)
     print(checks)
+
+    answers.close()
+    output.close()
+
+else:
+    print('Wrong test.')
