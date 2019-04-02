@@ -14,6 +14,9 @@ RMBC = 0
 
 CC := gcc
 CFLAGS := -g -I$(IDIR) -I$(LDIR) -Wall -Wextra -O3 -std=c99
+OFLAG := ""
+
+CFLAGS += $(OFLAG)
 
 # Headers
 LIB = Rii.h grafo.h map.h tree.h vector.h checks.h
@@ -29,10 +32,10 @@ $(BDIR)/%: $(ODIR)/%.o $(OBJ) $(LIB)
 	@$(CC) -o $@ $^ $(CFLAGS)
 
 penazzi: $(BDIR)/penazzi
-	@./$(BDIR)/penazzi $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
+	@$(BDIR)/penazzi $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
 performance: $(BDIR)/performance
-	$(BDIR)/performance $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
+	@$(BDIR)/performance $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
 %.v: $(BDIR)/%
 	@valgrind --show-reachable=yes --leak-check=full $(BDIR)/$(subst .v,,$@) $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)

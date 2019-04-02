@@ -1,9 +1,8 @@
 #include "Rii.h"
 
-void doNatural(Grafo);
-void doWelsh(Grafo);
-void doRMBC(Grafo);
-void doRMBCr(Grafo);
-void doRMBCc(Grafo);
-void doGreedy(Grafo);
-void doBipartito(Grafo);
+void correrNatural(Grafo);
+void correrWelsh(Grafo);
+void correrSwitch(Grafo, u32);
+void correrRMBC(Grafo, u32);
+void correrGreedy(Grafo);
+void correrBipartito(Grafo);

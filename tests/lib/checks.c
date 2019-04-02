@@ -1,58 +1,21 @@
 #include "checks.h"
 
-void correrNatural(Grafo g) {
-	doNatural(g);
-	doGreedy(g);
-	fprintf(stdout, "%u\n", NumeroDeColores(g));
+static void properColoring(Grafo g, u32 x) {
+    u32 n = NumeroDeVertices(g);
+    u32 y = 0;
+    fore(i, 0, n) {
+        u32 d = GradoDelVertice(g, i);
+        u32 c = ColorDelVertice(g, i);
+        y = max(y, c);
+        fore(j, 0, d) {
+            assert(ColorJotaesimoVecino(g, i, j) != c);
+        }
+    }
+    assert(y + 1 == x);
 }
 
-void correrWelsh(Grafo g) {
-	doWelsh(g);
-	doGreedy(g);
-	fprintf(stdout, "%u\n", NumeroDeColores(g));
-}
-
-void correrSwitch(Grafo g, u32 times) {
-	srand(rand());
+static void checkNatural(Grafo g) {
 	u32 n = NumeroDeVertices(g);
-	u32 x = NumeroDeColores(g);
-	fore(i, 0, times) {
-		int r1 = rand() % n;
-		int r2 = rand() % n;
-		SwitchVertices(g, r1, r2);
-		doGreedy(g);
-		x = min(x, NumeroDeColores(g));
-	}
-	fprintf(stdout, "%u\n", x);
-}
-
-void correrRMBC(Grafo g, u32 times) {
-	srand(rand());
-	u32 x = NumeroDeColores(g);
-	fore(i, 0, times) {
-		int r = rand() % 3;
-		switch(r) {
-			case 0:
-				doRMBC(g);
-				break;
-			case 1:
-				doRMBCr(g);
-				break;
-			case 2:
-				doRMBCc(g);
-				break;
-		}
-		doGreedy(g);
-		x = min(x, NumeroDeColores(g));
-	}
-	fprintf(stdout, "%u\n", x);
-}
-
-void doNatural(Grafo g) {
-	u32 n = NumeroDeVertices(g);
-    // Natural order
-	OrdenNatural(g);
-	#ifdef HARD
     // First vertex
 	u32 ant = NombreDelVertice(g, 0);
 	fore(i, 1, n) {
@@ -61,14 +24,10 @@ void doNatural(Grafo g) {
 		assert(ant < v);
 		ant = v;
 	}
-	#endif
 }
 
-void doWelsh(Grafo g) {
+static void checkWelsh(Grafo g) {
 	u32 n = NumeroDeVertices(g);
-    // Welsh order
-	OrdenWelshPowell(g);
-	#ifdef HARD
     // Degree of first vertex
 	u32 ant = GradoDelVertice(g, 0);
 	fore(i, 1, n) {
@@ -77,14 +36,10 @@ void doWelsh(Grafo g) {
 		assert(ant >= v);
 		ant = v;
 	}
-	#endif
 }
 
-void doRMBC(Grafo g) {
+static void chechRMBC(Grafo g) {
 	u32 n = NumeroDeVertices(g);
-    // RMBC order
-	RMBCnormal(g);
-	#ifdef HARD
     // Current color
 	u32 c = ColorDelVertice(g, 0);
     // Must be zero
@@ -98,14 +53,10 @@ void doRMBC(Grafo g) {
 	}
     // Using every color?
 	assert(c + 1 == NumeroDeColores(g));
-	#endif
 }
 
-void doRMBCr(Grafo g) {
+static void checkRMBCr(Grafo g) {
 	u32 n = NumeroDeVertices(g);
-    // RMBC-reverse order
-	RMBCrevierte(g);
-	#ifdef HARD
     // Current color
 	u32 c = ColorDelVertice(g, 0);
     // Must be the last possible color
@@ -119,14 +70,10 @@ void doRMBCr(Grafo g) {
 	}
     // Using every color?
 	assert(c == 0);
-	#endif
 }
 
-void doRMBCc(Grafo g) {
+static void checkRMBCc(Grafo g) {
 	u32 n = NumeroDeVertices(g);
-    // RMBC-by-size order
-	RMBCchicogrande(g);
-	#ifdef HARD
     // Array to track used colors
 	int* arr = calloc(n, sizeof(int));
     // Current color
@@ -158,37 +105,75 @@ void doRMBCc(Grafo g) {
 	}
     free(arr);
 	assert(d == NumeroDeColores(g));
-	#endif
 }
 
-static void properColoring(Grafo g, u32 x) {
-    u32 n = NumeroDeVertices(g);
-    u32 y = 0;
-    fore(i, 0, n) {
-        u32 d = GradoDelVertice(g, i);
-        u32 c = ColorDelVertice(g, i);
-        y = max(y, c);
-        fore(j, 0, d) {
-            assert(ColorJotaesimoVecino(g, i, j) != c);
-        }
-    }
-    assert(y + 1 == x);
-}
-
-void doGreedy(Grafo g) {
-    // Greedy
-    Greedy(g);
-    // Check correct coloring
+void correrNatural(Grafo g) {
+	OrdenNatural(g);
+	Greedy(g);
 	#ifdef HARD
-    properColoring(g, NumeroDeColores(g));
-	#endif
-}
-
-void doBipartito(Grafo g) {
-    // Bipartito
-    Bipartito(g);
-    // Check correct coloring
-    #ifdef HARD
+	checkNatural(g);
 	properColoring(g, NumeroDeColores(g));
 	#endif
+	fprintf(stdout, "%u\n", NumeroDeColores(g));
+}
+
+void correrWelsh(Grafo g) {
+	OrdenWelshPowell(g);
+	Greedy(g);
+	#ifdef HARD
+	checkWelsh(g);
+	properColoring(g, NumeroDeColores(g));
+	#endif
+	fprintf(stdout, "%u\n", NumeroDeColores(g));
+}
+
+void correrSwitch(Grafo g, u32 times) {
+	srand(rand());
+	u32 n = NumeroDeVertices(g);
+	u32 x = NumeroDeColores(g);
+	fore(i, 0, times) {
+		int r1 = rand() % n;
+		int r2 = rand() % n;
+		SwitchVertices(g, r1, r2);
+		Greedy(g);
+		#ifdef HARD
+		properColoring(g, NumeroDeColores(g));
+		#endif
+		x = min(x, NumeroDeColores(g));
+	}
+	fprintf(stdout, "%u\n", x);
+}
+
+void correrRMBC(Grafo g, u32 times) {
+	srand(rand());
+	u32 x = NumeroDeColores(g);
+	fore(i, 0, times) {
+		int r = rand() % 3;
+		switch(r) {
+			case 0:
+				RMBCnormal(g);
+				#ifdef HARD
+				chechRMBC(g);
+				#endif
+				break;
+			case 1:
+				RMBCrevierte(g);
+				#ifdef HARD
+				checkRMBCr(g);
+				#endif
+				break;
+			case 2:
+				RMBCchicogrande(g);
+				#ifdef HARD
+				checkRMBCc(g);
+				#endif
+				break;
+		}
+		Greedy(g);
+		#ifdef HARD
+		properColoring(g, NumeroDeColores(g));
+		#endif
+		x = min(x, NumeroDeColores(g));
+	}
+	fprintf(stdout, "%u\n", x);
 }
