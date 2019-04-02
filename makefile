@@ -32,7 +32,7 @@ penazzi: $(BDIR)/penazzi
 	@./$(BDIR)/penazzi $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
 %.v: $(BDIR)/%
-	@valgrind --show-reachable=yes --leak-check=full $(BDIR)/$(subst .v,,$@)
+	@valgrind --show-reachable=yes --leak-check=full $(BDIR)/$(subst .v,,$@) $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
 .PRECIOUS: $(ODIR)/%.o
 

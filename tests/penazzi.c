@@ -1,5 +1,4 @@
 #include "checks.h"
-#include "time.h"
 
 void correrNatural(Grafo g) {
 	doNatural(g);
@@ -13,8 +12,8 @@ void correrWelsh(Grafo g) {
 	fprintf(stdout, "%u\n", NumeroDeColores(g));
 }
 
-void correrSwitch(Grafo g, int times) {
-	srand(clock());
+void correrSwitch(Grafo g, u32 times) {
+	srand(rand());
 	u32 n = NumeroDeVertices(g);
 	u32 x = NumeroDeColores(g);
 	fore(i, 0, times) {
@@ -27,8 +26,8 @@ void correrSwitch(Grafo g, int times) {
 	fprintf(stdout, "%u\n", x);
 }
 
-void correrRMBC(Grafo g, int times) {
-	srand(clock());
+void correrRMBC(Grafo g, u32 times) {
+	srand(rand());
 	u32 x = NumeroDeColores(g);
 	fore(i, 0, times) {
 		int r = rand() % 3;
@@ -46,22 +45,23 @@ void correrRMBC(Grafo g, int times) {
 		doGreedy(g);
 		x = min(x, NumeroDeColores(g));
 	}
-	fprintf(stdout, "%u", x);
+	fprintf(stdout, "%u\n", x);
 }
 
 int main(int argc, char *argv[]) {
 	
 	if(argc < 3) return -1;
 
-	int sw = atoi(argv[1]);
-	int rm = atoi(argv[2]);
-	
+	u32 sw = atoi(argv[1]);
+	u32 rm = atoi(argv[2]);
+
 	Grafo g = ConstruccionDelGrafo();
+	
 	correrNatural(g);
 	correrWelsh(g);
 	correrSwitch(g, sw);
 	correrRMBC(g, rm);
-	
+
 	DestruccionDelGrafo(g);
 	return 0;
 }

@@ -14,7 +14,7 @@ inp = samdir + sample
 out = outdir + sample
 ans = ansdir + sample
 
-if test == 'penazzi':
+if 'penazzi' in test:
     # Command for penazzi test
     command = ['make', test, 'SWITCH=', 'RMBC=', 'INPUT=', 'OUTPUT=']
     args = [inp, out]
@@ -32,7 +32,9 @@ if test == 'penazzi':
 
     output = open(out, 'r')
 
-    print('Runned', test, 'test with', s, 'switches and', r, 'RMBCs')
+    message = 'Runned ' + test + ' test with ' + s + ' switches and ' + r + ' RMBCs'
+
+    print(message)
     
     ansline = answers.readline()
     outline = output.readline()
