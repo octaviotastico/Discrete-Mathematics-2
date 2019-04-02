@@ -4,20 +4,19 @@
 #include "grafo.c"
 
 u32 Greedy(Grafo G) {
-	u32* available = (u32*)malloc(G->n * sizeof(u32));
+	u32* available = calloc(G->n, sizeof(u32));
 	vector v = vector_create();
 
 	if(!available || !v) return 1;
 
 	memset(G->color, ~0u, G->n * sizeof(u32));
-	memset(available, 0, G->n * sizeof(u32));
 
 	G->x = 0;
 
 	fore(i, 0, G->n) {
 		fore(j, 0, GradoDelVertice(G, i)) {
 			u32 x = ColorJotaesimoVecino(G, i, j);
-			if(x != ~0u) {
+			if(x != ~0u && !available[x]) {
 				available[x] = 1;
 				if(vector_push_back(v, x)) {
 					free(available);
@@ -31,7 +30,6 @@ u32 Greedy(Grafo G) {
 		G->x = max(G->x, c + 1);
 		while(!vector_empty(v)) available[vector_pop_back(v)] = 0;
 	}
-	
 	free(available);
 	vector_destroy(v);
 	return 0;

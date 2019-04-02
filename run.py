@@ -2,8 +2,22 @@ import sys
 import os
 
 samdir = 'samples/'
+try:
+    os.stat(samdir)
+except:
+    os.mkdir(samdir)
+
 outdir = 'out/'
+try:
+    os.stat(outdir)
+except:
+    os.mkdir(outdir)
+
 ansdir = 'ans/'
+try:
+    os.stat(ansdir)
+except:
+    os.mkdir(ansdir)
 
 # Command line arguments test and sample
 test = sys.argv[1]
@@ -14,7 +28,34 @@ inp = samdir + sample
 out = outdir + sample
 ans = ansdir + sample
 
-if test == 'penazzi':
+if 'performance' in test:
+    # Command for performance test
+    command = ['make', test, 'INPUT=', 'OUTPUT=']
+    args = [inp, out]
+
+    command[2] += args[0]
+    command[3] += args[1]
+    
+    sh = ' '.join(command)
+    os.system(sh)
+
+    output = open(out, 'r')
+
+    message = 'Runned ' + test + ' test'
+    print("\n" + message + "\n")
+
+    print('Time spent creating graph: ' + output.readline())
+    next(output)
+    print('Time spent running Natural: ' + output.readline())
+    next(output)
+    print('Time spent running Welsh: ' + output.readline())
+    next(output)
+    print('Time spent running Switch: ' + output.readline())
+    next(output)
+    print('Time spent running RMBC: ' + output.readline())
+
+
+if 'penazzi' in test:
     # Command for penazzi test
     command = ['make', test, 'SWITCH=', 'RMBC=', 'INPUT=', 'OUTPUT=']
     args = [inp, out]
@@ -32,7 +73,9 @@ if test == 'penazzi':
 
     output = open(out, 'r')
 
-    print('Runned', test, 'test with', s, 'switches and', r, 'RMBCs')
+    message = 'Runned ' + test + ' test with ' + s + ' switches and ' + r + ' RMBCs'
+
+    print(message)
     
     ansline = answers.readline()
     outline = output.readline()

@@ -57,9 +57,9 @@ char OrdenWelshPowell(Grafo G) {
 
 char SwitchVertices(Grafo G, u32 i, u32 j) {
     if(i >= G->n || j >= G->n) return 1;
-    G->order[i] ^= G->order[j];
-    G->order[j] ^= G->order[i];
-    G->order[i] ^= G->order[j];
+    u32 aux = G->order[i];
+    G->order[i] = G->order[j];
+    G->order[j] = aux;
     return 0;
 }
 
