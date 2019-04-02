@@ -30,9 +30,9 @@ $(BDIR)/%: $(ODIR)/%.o $(OBJ) $(LIB)
 
 penazzi: $(BDIR)/penazzi
 	@./$(BDIR)/penazzi $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
-	
+
 performance: $(BDIR)/performance
-	@./$(BDIR)/performance <$(INPUT) >$(OUTPUT)
+	$(BDIR)/performance $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
 %.v: $(BDIR)/%
 	@valgrind --show-reachable=yes --leak-check=full $(BDIR)/$(subst .v,,$@) $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)

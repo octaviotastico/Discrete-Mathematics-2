@@ -1,11 +1,15 @@
 import sys
 import os
 
-samdir = 'samples/'
 try:
-    os.stat(samdir)
+    os.stat('bin')
 except:
-    os.mkdir(samdir)
+    os.mkdir('bin')
+
+try:
+    os.stat('obj')
+except:
+    os.mkdir('obj')
 
 outdir = 'out/'
 try:
@@ -14,35 +18,44 @@ except:
     os.mkdir(outdir)
 
 ansdir = 'ans/'
-try:
-    os.stat(ansdir)
-except:
-    os.mkdir(ansdir)
+
 
 # Command line arguments test and sample
 test = sys.argv[1]
 sample = sys.argv[2]
 
+_, dest = sample.split('/', 1)
+
 # Three important files
-inp = samdir + sample
-out = outdir + sample
-ans = ansdir + sample
+inp = sample
+out = outdir + dest
+ans = ansdir + dest
+
+try:
+    os.stat(out)
+except:
+    os.touch(out)
 
 if 'performance' in test:
     # Command for performance test
-    command = ['make', test, 'INPUT=', 'OUTPUT=']
-    args = [inp, out]
+    command = ['make', test, 'SWITCH=', 'RMBC=', 'INPUT=', 'OUTPUT=']
 
-    command[2] += args[0]
-    command[3] += args[1]
+    answers = open(ans, 'r')
+    s, r = answers.readline().split()
+
+    args = [s, r, inp, out]
+
+    for i in range (2, 6):
+        command[i] += args[i - 2]
     
     sh = ' '.join(command)
     os.system(sh)
 
     output = open(out, 'r')
 
-    message = 'Runned ' + test + ' test'
-    print("\n" + message + "\n")
+    message = 'Runned ' + test + ' test with ' + s + ' switches and ' + r + ' RMBCs'
+
+    print(message)
 
     print('Time spent creating graph: ' + output.readline())
     next(output)
@@ -53,6 +66,9 @@ if 'performance' in test:
     print('Time spent running Switch: ' + output.readline())
     next(output)
     print('Time spent running RMBC: ' + output.readline())
+    print('Time spent destroying graph: ' + output.readline())
+    print('Penazzi time: ' + answers.readline())
+    print('Your time: ' + output.readline())
 
 
 if 'penazzi' in test:
