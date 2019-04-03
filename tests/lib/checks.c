@@ -1,6 +1,6 @@
 #include "checks.h"
 
-static void properColoring(Grafo g, u32 x) {
+void properColoring(Grafo g, u32 x) {
     u32 n = NumeroDeVertices(g);
     u32 y = 0;
     fore(i, 0, n) {
@@ -14,7 +14,23 @@ static void properColoring(Grafo g, u32 x) {
     assert(y + 1 == x);
 }
 
-static void checkNatural(Grafo g) {
+void checkIsomorfism(Grafo a, Grafo b) {
+	u32 n1 = NumeroDeVertices(a), n2 = NumeroDeVertices(b);
+	assert(n1 == n2);
+	assert(NumeroDeLados(a) == NumeroDeLados(b));
+	assert(NumeroDeColores(a) == NumeroDeColores(b));
+	fore(i, 0, n1) {
+		assert(NombreDelVertice(a, i) == NombreDelVertice(b, i));
+		assert(ColorDelVertice(a, i) == ColorDelVertice(b, i));
+		assert(GradoDelVertice(a, i) == GradoDelVertice(b, i));
+		fore(j, 0, GradoDelVertice(a, i)) {
+			assert(NombreJotaesimoVecino(a, i, j) == NombreJotaesimoVecino(b, i, j));
+			assert(ColorJotaesimoVecino(a, i, j) == ColorJotaesimoVecino(b, i, j));
+		}
+	}
+}
+
+void checkNatural(Grafo g) {
 	u32 n = NumeroDeVertices(g);
     // First vertex
 	u32 ant = NombreDelVertice(g, 0);
@@ -26,7 +42,7 @@ static void checkNatural(Grafo g) {
 	}
 }
 
-static void checkWelsh(Grafo g) {
+void checkWelsh(Grafo g) {
 	u32 n = NumeroDeVertices(g);
     // Degree of first vertex
 	u32 ant = GradoDelVertice(g, 0);
@@ -38,7 +54,7 @@ static void checkWelsh(Grafo g) {
 	}
 }
 
-static void chechRMBC(Grafo g) {
+void chechRMBC(Grafo g) {
 	u32 n = NumeroDeVertices(g);
     // Current color
 	u32 c = ColorDelVertice(g, 0);
@@ -55,7 +71,7 @@ static void chechRMBC(Grafo g) {
 	assert(c + 1 == NumeroDeColores(g));
 }
 
-static void checkRMBCr(Grafo g) {
+void checkRMBCr(Grafo g) {
 	u32 n = NumeroDeVertices(g);
     // Current color
 	u32 c = ColorDelVertice(g, 0);
@@ -72,7 +88,7 @@ static void checkRMBCr(Grafo g) {
 	assert(c == 0);
 }
 
-static void checkRMBCc(Grafo g) {
+void checkRMBCc(Grafo g) {
 	u32 n = NumeroDeVertices(g);
     // Array to track used colors
 	int* arr = calloc(n, sizeof(int));
@@ -107,73 +123,79 @@ static void checkRMBCc(Grafo g) {
 	assert(d == NumeroDeColores(g));
 }
 
-void correrNatural(Grafo g) {
-	OrdenNatural(g);
-	Greedy(g);
-	#ifdef HARD
-	checkNatural(g);
-	properColoring(g, NumeroDeColores(g));
-	#endif
-	fprintf(stdout, "%u\n", NumeroDeColores(g));
-}
-
-void correrWelsh(Grafo g) {
-	OrdenWelshPowell(g);
-	Greedy(g);
-	#ifdef HARD
-	checkWelsh(g);
-	properColoring(g, NumeroDeColores(g));
-	#endif
-	fprintf(stdout, "%u\n", NumeroDeColores(g));
-}
-
-void correrSwitch(Grafo g, u32 times) {
-	srand(rand());
-	u32 n = NumeroDeVertices(g);
-	u32 x = NumeroDeColores(g);
-	fore(i, 0, times) {
-		int r1 = rand() % n;
-		int r2 = rand() % n;
-		SwitchVertices(g, r1, r2);
-		Greedy(g);
+void correrNatural(Grafo* g, u32 n) {
+	fore(i, 0, n) {
+		OrdenNatural(g[i]);
+		Greedy(g[i]);
 		#ifdef HARD
-		properColoring(g, NumeroDeColores(g));
+		checkNatural(g[i]);
+		properColoring(g[i], NumeroDeColores(g[i]));
+		fore(i, 0, n) fore(j, i + 1, n) checkIsomorfism(g[i], g[j]);
 		#endif
-		x = min(x, NumeroDeColores(g));
 	}
-	fprintf(stdout, "%u\n", x);
+	if(n == 1) fprintf(stdout, "%u\n", NumeroDeColores(g[0]));
 }
 
-void correrRMBC(Grafo g, u32 times) {
-	srand(rand());
-	u32 x = NumeroDeColores(g);
+void correrWelsh(Grafo* g, u32 n) {
+	fore(i, 0, n) {
+		OrdenWelshPowell(g[i]);
+		Greedy(g[i]);
+		#ifdef HARD
+		checkWelsh(g[i]);
+		properColoring(g[i], NumeroDeColores(g[i]));
+		fore(i, 0, n) fore(j, i + 1, n) checkIsomorfism(g[i], g[j]);
+		#endif
+	}
+	if(n == 1) fprintf(stdout, "%u\n", NumeroDeColores(g[0]));
+}
+
+void correrSwitch(Grafo* g, u32 n, u32 times) {
+	u32 x = NumeroDeColores(g[0]);
 	fore(i, 0, times) {
+		int index = rand() % n;
+		u32 N = NumeroDeVertices(g[index]);
+		int r1 = rand() % N;
+		int r2 = rand() % N;
+		SwitchVertices(g[index], r1, r2);
+		Greedy(g[index]);
+		#ifdef HARD
+		properColoring(g[index], NumeroDeColores(g[index]));
+		#endif
+		x = min(x, NumeroDeColores(g[index]));
+	}
+	if(n == 1) fprintf(stdout, "%u\n", x);
+}
+
+void correrRMBC(Grafo* g, u32 n, u32 times) {
+	u32 x = NumeroDeColores(g[0]);
+	fore(i, 0, times) {
+		int index = rand() % n;
 		int r = rand() % 3;
 		switch(r) {
 			case 0:
-				RMBCnormal(g);
+				RMBCnormal(g[index]);
 				#ifdef HARD
-				chechRMBC(g);
+				chechRMBC(g[index]);
 				#endif
 				break;
 			case 1:
-				RMBCrevierte(g);
+				RMBCrevierte(g[index]);
 				#ifdef HARD
-				checkRMBCr(g);
+				checkRMBCr(g[index]);
 				#endif
 				break;
 			case 2:
-				RMBCchicogrande(g);
+				RMBCchicogrande(g[index]);
 				#ifdef HARD
-				checkRMBCc(g);
+				checkRMBCc(g[index]);
 				#endif
 				break;
 		}
-		Greedy(g);
+		Greedy(g[index]);
 		#ifdef HARD
-		properColoring(g, NumeroDeColores(g));
+		properColoring(g[index], NumeroDeColores(g[index]));
 		#endif
-		x = min(x, NumeroDeColores(g));
+		x = min(x, NumeroDeColores(g[index]));
 	}
 	fprintf(stdout, "%u\n", x);
 }

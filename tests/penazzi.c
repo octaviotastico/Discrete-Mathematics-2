@@ -9,10 +9,10 @@ int main(int argc, char *argv[]) {
 
 	Grafo g = ConstruccionDelGrafo();
 	
-	correrNatural(g);
-	correrWelsh(g);
-	correrSwitch(g, sw);
-	correrRMBC(g, rm);
+	correrNatural(&g, 1);
+	correrWelsh(&g, 1);
+	correrSwitch(&g, 1, sw);
+	correrRMBC(&g, 1, rm);
 
 	DestruccionDelGrafo(g);
 	return 0;
