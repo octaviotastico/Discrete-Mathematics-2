@@ -4,6 +4,9 @@ import sys
 import optparse
 
 def run_test(graph, test, mode):
+
+    if test == 'memory':
+        test += '.v'
     # Command for performance and penazzi test
     command = ['make ' + test, 'SWITCH=', 'RMBC=', 'INPUT=', 'OUTPUT=', 'OFLAG=']
 
@@ -71,7 +74,6 @@ def run_test(graph, test, mode):
     if test == 'penazzi':
         ansline = ansfile.readline()
         outline = outfile.readline()
-
         checks = ['GREEDY\n', 'WELSH\n', 'SWITCH\n', 'RMBC\n']
         expected = []
         given = []
@@ -79,13 +81,12 @@ def run_test(graph, test, mode):
             expected.append(ansline)
             given.append(outline)
             ansline, outline = ansfile.readline(), outfile.readline()
-
         for i in range (0, 4):
             checks[i] += 'Expected: ' + expected[i] + 'Given: ' + given[i]
-
         checks = '\n'.join(checks)
         print(checks)
-    else:
+    
+    elif test == 'performance':
         print('Time spent creating graph: ' + outfile.readline())
         next(outfile)
         print('Time spent running Natural: ' + outfile.readline())
@@ -98,18 +99,35 @@ def run_test(graph, test, mode):
         print('Time spent destroying graph: ' + outfile.readline())
         print('Penazzi time: ' + ansfile.readline())
         print('Your time: ' + outfile.readline())
-
+    
+    elif test == 'memory':
+        vfile = open(out/valgrindinfo, 'r')
+        for line in vfile:
+            if 'total heap usage' in line:
+                info = line
+                break
+        print(info)
+        vfile.close()
+    
     # Close files
     ansfile.close()
     outfile.close()
-
 
 def main():
     """
     Interfaz simple para correr los tests y obtener los resultados
     """
+    # Crea los directorios si no existen.
+    try:
+        os.stat('bin')
+    except:
+        os.mkdir('bin')
+    try:
+        os.stat('obj')
+    except:
+        os.mkdir('obj')
 
-    # Parsear argumentos
+    # Parsear argumentos-
     parser = optparse.OptionParser(usage="%prog [options] test graph")
     parser.add_option("-t", "--test",
                       help="Run tests with hard difficulty", action="store_true", default=False, dest="diff")
@@ -120,14 +138,13 @@ def main():
         exit(0)
 
     test, graph = args
-    if test == 'penazzi' or test == 'performance':
+    if test == 'penazzi' or test == 'performance' or test == 'memory':
         run_test(graph, test, options.diff)
-    elif test == 'memory':
-        pass
     else:
         print("Wrong test name")
         print("Available tests are penazzi, performance and memory")
     
+    #os.system('make clean')
     exit(0)
 
 if __name__ == '__main__':
