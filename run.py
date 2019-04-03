@@ -3,7 +3,7 @@ import os
 import sys
 import optparse
 
-def test_function(graph, test, mode):
+def run_test(graph, test, mode):
     # Command for performance and penazzi test
     command = ['make ' + test, 'SWITCH=', 'RMBC=', 'INPUT=', 'OUTPUT=', 'OFLAG=']
 
@@ -21,9 +21,24 @@ def test_function(graph, test, mode):
     # We open ansfile
     try:
         ansfile = open(ans, 'r')
-    except OSError:
+    except IOError:
         print("Answer file for " + graph + " not found.")
         exit(0)
+
+    # Create the paths out/$(test)/graph, bin and obj
+    if not os.path.isdir('out'):
+        os.mkdir('out')
+    if not os.path.isdir('out/' + test):
+        os.mkdir('out/' + test)
+    if not os.path.isfile(out):
+        os.mknod(out)
+    if not os.path.isdir('bin'):
+        os.mkdir('bin')
+    if not os.path.isdir('obj'):
+        os.mkdir('obj')
+
+    # Open output file
+    outfile = open(out, 'r')
 
     # Read SWITCH and RMBC
     try:
@@ -32,30 +47,27 @@ def test_function(graph, test, mode):
         print("Answer file has wrong format, 'sw rm' needed")
         exit(0)
 
-    # We open outfile, creating it if necessary
-    try:
-        outfile = open(out, 'r')
-    except OSError:
-        if not os.path.isdir('out'):
-            os.mkdir('out')
-        os.mknod(out)
-
+    # Make arguments
     args = [sw, rm, inp, out]
 
+    # Merge command with arguments
     for i in range(1, len(command) - 1):
         command[i] += args[i - 1]
 
     if(mode):
         command[-1] += '-DHARD'
 
+    # Convert command to string
     command = ' '.join(command)
 
+    # Launch command
     os.system(command)
 
+    # What have we done?
     message = 'Runned ' + test + ' test with ' + sw + ' switches and ' + rm + ' RMBCs'
-
     print(message)
 
+    # Collect data depending on test
     if test == 'penazzi':
         ansline = ansfile.readline()
         outline = outfile.readline()
@@ -87,6 +99,7 @@ def test_function(graph, test, mode):
         print('Penazzi time: ' + ansfile.readline())
         print('Your time: ' + outfile.readline())
 
+    # Close files
     ansfile.close()
     outfile.close()
 
@@ -108,7 +121,7 @@ def main():
 
     test, graph = args
     if test == 'penazzi' or test == 'performance':
-        test_function(graph, test, options.diff)
+        run_test(graph, test, options.diff)
     elif test == 'memory':
         pass
     else:

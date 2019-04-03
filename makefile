@@ -9,12 +9,13 @@ VPATH = $(IDIR):$(TDIR):$(LDIR)
 INPUT = ""
 OUTPUT = ""
 
+OFLAG = ""
+
 SWITCH = 0
 RMBC = 0
 
 CC := gcc
 CFLAGS := -g -I$(IDIR) -I$(LDIR) -Wall -Wextra -O3 -std=c99
-OFLAG := ""
 
 CFLAGS += $(OFLAG)
 
