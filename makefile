@@ -38,8 +38,11 @@ penazzi: $(BDIR)/penazzi
 performance: $(BDIR)/performance
 	@$(BDIR)/performance $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
+memory: $(BDIR)/memory
+	@$(BDIR)/memory $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
+
 %.v: $(BDIR)/%
-	@valgrind --show-reachable=yes --leak-check=full $(BDIR)/$(subst .v,,$@) $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
+	@valgrind --show-reachable=yes --leak-check=full --log-file="./out/valgrindinfo.txt" $(BDIR)/$(subst .v,,$@) $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
 .PRECIOUS: $(ODIR)/%.o
 
