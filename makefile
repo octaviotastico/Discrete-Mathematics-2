@@ -11,6 +11,7 @@ OUTPUT = ""
 
 OFLAG = ""
 
+GRAPHS = 0
 SWITCH = 0
 RMBC = 0
 
@@ -38,11 +39,8 @@ penazzi: $(BDIR)/penazzi
 performance: $(BDIR)/performance
 	@$(BDIR)/performance $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
-memory: $(BDIR)/memory
-	@$(BDIR)/memory $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
-
 %.v: $(BDIR)/%
-	@valgrind --show-reachable=yes --leak-check=full --log-file="./out/valgrindinfo.txt" $(BDIR)/$(subst .v,,$@) $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
+	@valgrind --show-reachable=yes --leak-check=full -v --log-file="out/memory/$(notdir $(OUTPUT))" $(BDIR)/$(subst .v,,$@) $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
 .PRECIOUS: $(ODIR)/%.o
 
