@@ -15,8 +15,8 @@ int main(int argc, char *argv[]) {
 
     fore(i, 1, n) grafos[i] = CopiarGrafo(grafos[i - 1]);
 
-    fore(i, 0, n) correrVariosNatural(grafos[i]);
-    fore(i, 0, n) correrVariosWelsh(grafos[i]);
+    fore(i, 0, n) correrNatural(grafos[i], n);
+    fore(i, 0, n) correrWelsh(grafos[i], n);
 
     fore(i, 0, n) DestruccionDelGrafo(grafos[i]);
 
