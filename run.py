@@ -43,7 +43,7 @@ def run_test(graph, test, diff, mem):
         try:
             gr, sw, rm = ansfile.readline().split()
         except ValueError:
-            print("Answer file has wrong format, 'sw rm' needed")
+            print("Answer file has wrong format, 'gr sw rm' needed")
             exit(0)
     else:
         try:
@@ -62,7 +62,7 @@ def run_test(graph, test, diff, mem):
     if diff:
         command[-1] += '-DHARD'
 
-    if mem or test == 'memory':
+    if mem:
         command[0] += '.v'
 
     # Convert command to string
@@ -108,10 +108,18 @@ def run_test(graph, test, diff, mem):
     if 'memory' == test or mem:
         vfile = open('out/memory/' + graph, 'r')
         for line in vfile:
-            if 'total heap usage' in line:
+            if 'HEAP SUMMARY' in line:
                 info = line
                 break
-        print(info[11:])
+        nextl = vfile.readline()
+        while nextl: # Search the first char
+            i = 9
+            while info[i] == ' ':
+                i += 1
+            print(info[i:])
+            info = vfile.readline()
+            nextl = vfile.readline()
+        
         vfile.close()
     
     # Close files
@@ -143,14 +151,21 @@ def main():
     parser.add_option("-t", "--test",
                       help="Run tests with hard difficulty", action="store_true", default=False, dest="diff")
     parser.add_option("-v", "--valgrind",
-                      help="", action="store_true", default=False, dest="mem")
+                      help="Run tests with valgrind", action="store_true", default=False, dest="mem")
     options, args = parser.parse_args()
 
-    if(len(args) != 2):
+    # Load the arguments in the variables
+    # if args[1] == 'memory': gr sw rm
+    test, graph = args
+
+    # Check if the arguments are valid
+    #if test == 'memory' and len(args) != 3:
+    #    print("Usage: run.py [options] test graph")
+    #    exit(0)
+    if len(args) != 2:
         print("Usage: run.py [options] test graph")
         exit(0)
 
-    test, graph = args
     if valid(test):
         run_test(graph, test, options.diff, options.mem)
     else:

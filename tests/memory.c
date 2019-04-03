@@ -13,12 +13,16 @@ int main(int argc, char *argv[]) {
 
     grafos[0] = ConstruccionDelGrafo();
 
-    fore(i, 1, n) grafos[i] = CopiarGrafo(grafos[i - 1]);
+    fore(i, 1, n) {
+        grafos[i] = CopiarGrafo(grafos[i - 1]);
+    }
 
-    fore(i, 0, n) correrNatural(grafos[i], n);
-    fore(i, 0, n) correrWelsh(grafos[i], n);
+    correrNatural(grafos, n);
+    correrWelsh(grafos, n);
 
     fore(i, 0, n) DestruccionDelGrafo(grafos[i]);
+
+    free(grafos);
 
     return 0;
 }

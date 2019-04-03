@@ -126,11 +126,11 @@ void checkRMBCc(Grafo g) {
 void correrNatural(Grafo* g, u32 n) {
 	fore(i, 0, n) {
 		OrdenNatural(g[i]);
-		Greedy(g[i]);
+		if(Greedy(g[i])) printf("HELLO\n");
 		#ifdef HARD
 		checkNatural(g[i]);
 		properColoring(g[i], NumeroDeColores(g[i]));
-		fore(i, 0, n) fore(j, i + 1, n) checkIsomorfism(g[i], g[j]);
+		fore(j, 0, n) fore(k, i + 1, n) checkIsomorfism(g[j], g[k]);
 		#endif
 	}
 	if(n == 1) fprintf(stdout, "%u\n", NumeroDeColores(g[0]));

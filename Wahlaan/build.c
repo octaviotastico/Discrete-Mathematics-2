@@ -211,6 +211,7 @@ Grafo CopiarGrafo(Grafo G) {
     if(!copy) return NULL;
 
     copy->n = G->n;
+    printf("%u", copy->n);
     copy->m = G->m;
     copy->x = G->x;
 
@@ -231,7 +232,7 @@ Grafo CopiarGrafo(Grafo G) {
 
         copy->g[i] = vector_create();
         if(!copy->g[i]) {
-            DestruccionDelGrafo(G);
+            DestruccionDelGrafo(copy);
             return NULL;
         }
 
