@@ -39,6 +39,7 @@ static void free_resources(Grafo g, char* line, map m, u32* u, u32* v) {
 }
 
 Grafo ConstruccionDelGrafo() {
+    // Allocs the memory of the graph
     Grafo G = (Grafo)malloc(sizeof(struct GrafoSt));
     G->n = G->m = G->x = 0;
     G->dict = G->color = G->order = NULL;
@@ -111,6 +112,7 @@ Grafo ConstruccionDelGrafo() {
     G->color = (u32*)malloc(G->n * sizeof(u32));
     G->order = (u32*)malloc(G->n * sizeof(u32));
 
+    // If there was an error on any of the allocs, free the memory
     if(!m || !u || !v || !G->dict || !G->color || !G->order) {
         free_resources(G, line, m, u, v);
         printf("Fallo al reservar memoria\n");
@@ -206,35 +208,42 @@ Grafo ConstruccionDelGrafo() {
 }
 
 Grafo CopiarGrafo(Grafo G) {
+    // Creates the new graph
     Grafo copy = (Grafo)malloc(sizeof(struct GrafoSt));
 
     if(!copy) return NULL;
 
+    // Copy number of vertex, edges, and number of colors
     copy->n = G->n;
     copy->m = G->m;
     copy->x = G->x;
 
+    // Allocs the vectors and arrays for verteces and colors
     copy->g = (vector*)malloc(copy->n * sizeof(vector));
     copy->dict = (u32*)malloc(copy->n * sizeof(u32));
     copy->color = (u32*)malloc(copy->n * sizeof(u32));
     copy->order = (u32*)malloc(copy->n * sizeof(u32));
 
+    // If any of the previous allocs failed, destroy resources
     if(!copy->g || !copy->dict || !copy->color || !copy->order) {
         DestruccionDelGrafo(copy);
         return NULL;
     }
 
     fore(i, 0, copy->n) {
+        // Copy coloring and order
         copy->color[i] = G->color[i];
         copy->order[i] = G->order[i];
         copy->dict[i] = G->dict[i];
 
+        // Allocs the neighbours for every vertex
         copy->g[i] = vector_create();
         if(!copy->g[i]) {
-            DestruccionDelGrafo(G);
+            DestruccionDelGrafo(copy);
             return NULL;
         }
 
+        // Copy the adjacency of every vertex
         fore(j, 0, vector_size(G->g[i])) {
             u32 v = vector_at(G->g[i], j);
             if(vector_push_back(copy->g[i], v)) {

@@ -1,3 +1,4 @@
+#include "lib.h"
 #include "Rii.h"
 
 void correrNatural(Grafo*, u32);

@@ -3,6 +3,7 @@
 
 #include "Rii.h"
 
+// Pointer to Tree structure
 typedef struct Tree * tree;
 
 // Creates a node

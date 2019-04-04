@@ -3,15 +3,13 @@ import os
 import sys
 import optparse
 
-def run_test(graph, test, mode):
+def run_test(graph, test, diff, mem):
 
-    if test == 'memory':
-        test += '.v'
     # Command for performance and penazzi test
-    command = ['make ' + test, 'SWITCH=', 'RMBC=', 'INPUT=', 'OUTPUT=', 'OFLAG=']
+    command = ['make ' + test, 'GRAPHS=', 'SWITCH=', 'RMBC=', 'INPUT=', 'OUTPUT=', 'OFLAG=']
 
     # Arguments for command
-    sw, rm, inp, out, ans = None, None, 'samples/' + test + '/' + graph, 'out/' + test + '/' + graph, 'ans/' + test + '/' + graph
+    gr, sw, rm, inp, out, ans = "", "", "", 'samples/' + test + '/' + graph, 'out/' + test + '/' + graph, 'ans/' + test + '/' + graph
 
     # Important files
     ansfile, outfile = None, None
@@ -28,37 +26,44 @@ def run_test(graph, test, mode):
         print("Answer file for " + graph + " not found.")
         exit(0)
 
-    # Create the paths out/$(test)/graph, bin and obj
-    if not os.path.isdir('out'):
-        os.mkdir('out')
+    # Create the paths out/$(test)/graph
     if not os.path.isdir('out/' + test):
         os.mkdir('out/' + test)
     if not os.path.isfile(out):
         os.mknod(out)
-    if not os.path.isdir('bin'):
-        os.mkdir('bin')
-    if not os.path.isdir('obj'):
-        os.mkdir('obj')
+    if mem and not os.path.isdir('out/memory'):
+        os.mkdir('out/memory')
+
 
     # Open output file
     outfile = open(out, 'r')
 
-    # Read SWITCH and RMBC
-    try:
-        sw, rm = ansfile.readline().split()
-    except ValueError:
-        print("Answer file has wrong format, 'sw rm' needed")
-        exit(0)
+    #if memory read graphs too
+    if test == 'memory':
+        try:
+            gr, sw, rm = ansfile.readline().split()
+        except ValueError:
+            print("Answer file has wrong format, 'gr sw rm' needed")
+            exit(0)
+    else:
+        try:
+            sw, rm = ansfile.readline().split()
+        except ValueError:
+            print("Answer file has wrong format, 'sw rm' needed")
+            exit(0)
 
     # Make arguments
-    args = [sw, rm, inp, out]
+    args = [gr, sw, rm, inp, out]
 
     # Merge command with arguments
     for i in range(1, len(command) - 1):
         command[i] += args[i - 1]
 
-    if(mode):
+    if diff:
         command[-1] += '-DHARD'
+
+    if mem:
+        command[0] += '.v'
 
     # Convert command to string
     command = ' '.join(command)
@@ -71,7 +76,7 @@ def run_test(graph, test, mode):
     print(message)
 
     # Collect data depending on test
-    if test == 'penazzi':
+    if 'penazzi' == test:
         ansline = ansfile.readline()
         outline = outfile.readline()
         checks = ['GREEDY\n', 'WELSH\n', 'SWITCH\n', 'RMBC\n']
@@ -86,7 +91,7 @@ def run_test(graph, test, mode):
         checks = '\n'.join(checks)
         print(checks)
     
-    elif test == 'performance':
+    if 'performance' == test:
         print('Time spent creating graph: ' + outfile.readline())
         next(outfile)
         print('Time spent running Natural: ' + outfile.readline())
@@ -100,46 +105,95 @@ def run_test(graph, test, mode):
         print('Penazzi time: ' + ansfile.readline())
         print('Your time: ' + outfile.readline())
     
-    elif test == 'memory':
-        vfile = open(out/valgrindinfo, 'r')
+    if 'memory' == test or mem:
+        vfile = open('out/memory/' + graph, 'r')
         for line in vfile:
-            if 'total heap usage' in line:
+            if 'HEAP SUMMARY' in line:
                 info = line
                 break
-        print(info)
+        nextl = vfile.readline()
+        while nextl: # Search the first char
+            i = 9
+            while info[i] == ' ':
+                i += 1
+            print(info[i:])
+            info = vfile.readline()
+            nextl = vfile.readline()
+        
         vfile.close()
     
     # Close files
     ansfile.close()
     outfile.close()
 
+def valid(str):
+    if str == 'penazzi':
+        return True
+    elif str == 'performance':
+        return True
+    elif str == 'memory':
+        return True
+
 def main():
     """
     Interfaz simple para correr los tests y obtener los resultados
     """
     # Crea los directorios si no existen.
-    try:
-        os.stat('bin')
-    except:
+    if not os.path.isdir('bin'):
         os.mkdir('bin')
-    try:
-        os.stat('obj')
-    except:
+    if not os.path.isdir('obj'):
         os.mkdir('obj')
+    if not os.path.isdir('out'):
+        os.mkdir('out')
 
     # Parsear argumentos-
     parser = optparse.OptionParser(usage="%prog [options] test graph")
     parser.add_option("-t", "--test",
                       help="Run tests with hard difficulty", action="store_true", default=False, dest="diff")
+    parser.add_option("-v", "--valgrind",
+                      help="Run tests with valgrind", action="store_true", default=False, dest="mem")
+    
     options, args = parser.parse_args()
 
-    if(len(args) != 2):
+    diff = '.difficulty'
+
+    if not os.path.isfile(diff):
+        os.mknod(diff)
+        d = open(diff, 'w')
+        d.write('EASY')
+        d.close()
+
+    # Read difficulty
+    diffile = open(diff, 'r')
+    mode = diffile.readline()
+    diffile.close()
+
+    # Change it if necessary, and do make clean
+    if 'EASY' in mode and options.diff:
+        os.system('make clean')
+        diffile = open(diff,'w')
+        diffile.write('HARD')
+        diffile.close()
+    elif 'HARD' in mode and not options.diff:
+        os.system('make clean')
+        diffile = open(diff,'w')
+        diffile.write('EASY')
+        diffile.close()
+
+    # Load the arguments in the variables
+    # if args[1] == 'memory': gr sw rm
+    test, graph = args
+
+    # Check if the arguments are valid
+    # if test == 'memory' and len(args) != 3:
+    #     print("Usage: run.py [options] test graph")
+    #     exit(0)
+    if len(args) != 2:
         print("Usage: run.py [options] test graph")
         exit(0)
 
-    test, graph = args
-    if test == 'penazzi' or test == 'performance' or test == 'memory':
-        run_test(graph, test, options.diff)
+    if valid(test):
+        run_test(graph, test, options.diff, options.mem)
     else:
         print("Wrong test name")
         print("Available tests are penazzi, performance and memory")
