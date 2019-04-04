@@ -155,17 +155,28 @@ def main():
     
     options, args = parser.parse_args()
 
-    diffile = open('.difficulty', 'r')
-    diff = diffile.readline()
+    diff = '.difficulty'
+
+    if not os.path.isfile(diff):
+        os.mknod(diff)
+        d = open(diff, 'w')
+        d.write('EASY')
+        d.close()
+
+    # Read difficulty
+    diffile = open(diff, 'r')
+    mode = diffile.readline()
     diffile.close()
-    if ('EASY' in diff) and options.diff:
+
+    # Change it if necessary, and do make clean
+    if 'EASY' in mode and options.diff:
         os.system('make clean')
-        diffile = open('.difficulty','w')
+        diffile = open(diff,'w')
         diffile.write('HARD')
         diffile.close()
-    elif 'HARD' in diff and not options.diff:
-        diffile = open('.difficulty','w')
+    elif 'HARD' in mode and not options.diff:
         os.system('make clean')
+        diffile = open(diff,'w')
         diffile.write('EASY')
         diffile.close()
 
