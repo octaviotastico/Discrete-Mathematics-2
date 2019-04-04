@@ -19,6 +19,9 @@ int main(int argc, char *argv[]) {
 
     correrNatural(grafos, n);
     correrWelsh(grafos, n);
+    correrSwitch(grafos, n, sw);
+    correrRMBC(grafos, n, rm);
+    correrBipartito(grafos, n);
 
     fore(i, 0, n) DestruccionDelGrafo(grafos[i]);
 

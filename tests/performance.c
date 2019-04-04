@@ -18,34 +18,39 @@ int main(int argc, char *argv[]) {
     gs = s = clock();
 	Grafo g = ConstruccionDelGrafo();
 	t = clock();
-    fprintf(stdout, "%f\n", c(s, t));
+    fprintf(stdout, "%fs\n", c(s, t));
 
     s = clock();
 	correrNatural(&g, 1);
     t = clock();
-    fprintf(stdout, "%f\n", c(s, t));
+    fprintf(stdout, "%fs\n", c(s, t));
 
     s = clock();
 	correrWelsh(&g, 1);
     t = clock();
-    fprintf(stdout, "%f\n", c(s, t));
+    fprintf(stdout, "%fs\n", c(s, t));
 	
     s = clock();
     correrSwitch(&g, 1, sw);
     t = clock();
-    fprintf(stdout, "%f\n", c(s, t));
+    fprintf(stdout, "%fs\n", c(s, t));
 	
     s = clock();
     correrRMBC(&g, 1, rm);
     t = clock();
-    fprintf(stdout, "%f\n", c(s, t));
+    fprintf(stdout, "%fs\n", c(s, t));
 
+    s = clock();
+    correrBipartito(&g, 1);
+    t = clock();
+    fprintf(stdout, "%fs\n", c(s, t));
+    
     s = clock();
 	DestruccionDelGrafo(g);
 	t = clock();
-    fprintf(stdout, "%f\n", c(s, t));
+    fprintf(stdout, "%fs\n", c(s, t));
 
     gt = clock();
-    fprintf(stdout, "%f\n", c(gs, gt));
+    fprintf(stdout, "%fs\n", c(gs, gt));
     return 0;
 }

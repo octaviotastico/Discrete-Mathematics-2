@@ -199,3 +199,16 @@ void correrRMBC(Grafo* g, u32 n, u32 times) {
 	}
 	fprintf(stdout, "%u\n", x);
 }
+
+void correrBipartito(Grafo* g, u32 n) {
+	int bip = 0;
+	fore(i, 0, n) {
+		bip = Bipartito(g[i]);
+		#ifdef HARD
+		properColoring(g[i], NumeroDeColores(g[i]));
+		#endif
+	}
+
+	if(n == 1 && bip) fprintf(stdout, "Yes\n");
+	else if(n == 1 && !bip) fprintf(stdout, "No\n");
+}

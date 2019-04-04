@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
 	correrWelsh(&g, 1);
 	correrSwitch(&g, 1, sw);
 	correrRMBC(&g, 1, rm);
+	correrBipartito(&g, 1);
 
 	DestruccionDelGrafo(g);
 	return 0;

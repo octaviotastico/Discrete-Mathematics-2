@@ -50,7 +50,7 @@ int Bipartito(Grafo G) {
 	vector stack = vector_create();
 
 	// If any of the allocs failed, return an error
-	if(!stack) return 1;
+	if(!stack) return -1;
 
 	// Set the coloring to -1 (2^32 - 1 in unsigned int)
 	memset(G->color, ~0u, G->n * sizeof(u32));
@@ -72,7 +72,7 @@ int Bipartito(Grafo G) {
 				if(G->color[n] == G->color[v]) {
 					vector_destroy(stack);
 					Greedy(G);
-					return 1;
+					return 0;
 				}
 				// Else, color it
 				if(G->color[n] == ~0u) {
@@ -85,7 +85,7 @@ int Bipartito(Grafo G) {
 	}
 	// Frees the resources
 	vector_destroy(stack);
-	return 0;
+	return 1;
 }
 
 #endif

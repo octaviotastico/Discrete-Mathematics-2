@@ -79,14 +79,14 @@ def run_test(graph, test, diff, mem):
     if 'penazzi' == test:
         ansline = ansfile.readline()
         outline = outfile.readline()
-        checks = ['GREEDY\n', 'WELSH\n', 'SWITCH\n', 'RMBC\n']
+        checks = ['GREEDY\n', 'WELSH\n', 'SWITCH\n', 'RMBC\n', 'Bipartito\n']
         expected = []
         given = []
         while ansline and outline:
             expected.append(ansline)
             given.append(outline)
             ansline, outline = ansfile.readline(), outfile.readline()
-        for i in range (0, 4):
+        for i in range (0, 5):
             checks[i] += 'Expected: ' + expected[i] + 'Given: ' + given[i]
         checks = '\n'.join(checks)
         print(checks)
@@ -101,6 +101,8 @@ def run_test(graph, test, diff, mem):
         print('Time spent running Switch: ' + outfile.readline())
         next(outfile)
         print('Time spent running RMBC: ' + outfile.readline())
+        next(outfile)
+        print('Time spent running Bipartito: ' + outfile.readline())
         print('Time spent destroying graph: ' + outfile.readline())
         print('Penazzi time: ' + ansfile.readline())
         print('Your time: ' + outfile.readline())
