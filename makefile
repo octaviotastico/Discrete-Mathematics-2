@@ -9,7 +9,7 @@ VPATH = $(IDIR):$(TDIR):$(LDIR)
 INPUT = ""
 OUTPUT = ""
 
-OFLAG = ""
+OFLAG := ""
 
 GRAPHS = 0
 SWITCH = 0
@@ -18,14 +18,15 @@ RMBC = 0
 CC := gcc
 CFLAGS := -g -I$(IDIR) -I$(LDIR) -Wall -Wextra -O3 -std=c99
 
-CFLAGS += $(OFLAG)
+# CFLAGS += $(OFLAG)
 
 # Headers
-LIB = Rii.h grafo.h map.h tree.h vector.h checks.h
+_LIB = $(wildcard $(IDIR)/*.h) checks.h
+LIB = $(patsubst $(IDIR)/%, %, $(_LIB))
 
 # Objects
-_OBJ = color.o grafo.o map.o build.o order.o query.o tree.o vector.o checks.o
-OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
+_OBJ = $(wildcard $(IDIR)/*.c)
+OBJ = $(patsubst $(IDIR)/%.c, $(ODIR)/%.o, $(_OBJ)) $(ODIR)/checks.o
 
 $(ODIR)/%.o: %.c
 	@$(CC) -c -o $@ $< $(CFLAGS)
@@ -49,4 +50,4 @@ memory: $(BDIR)/memory
 .PHONY: clean
 
 clean:
-	rm -f $(ODIR)/*.o $(BDIR)/*
+	@rm -f $(ODIR)/*.o $(BDIR)/*

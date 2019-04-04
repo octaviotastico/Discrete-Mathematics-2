@@ -152,7 +152,22 @@ def main():
                       help="Run tests with hard difficulty", action="store_true", default=False, dest="diff")
     parser.add_option("-v", "--valgrind",
                       help="Run tests with valgrind", action="store_true", default=False, dest="mem")
+    
     options, args = parser.parse_args()
+
+    diffile = open('.difficulty', 'r')
+    diff = diffile.readline()
+    diffile.close()
+    if ('EASY' in diff) and options.diff:
+        os.system('make clean')
+        diffile = open('.difficulty','w')
+        diffile.write('HARD')
+        diffile.close()
+    elif 'HARD' in diff and not options.diff:
+        diffile = open('.difficulty','w')
+        os.system('make clean')
+        diffile.write('EASY')
+        diffile.close()
 
     # Load the arguments in the variables
     # if args[1] == 'memory': gr sw rm
