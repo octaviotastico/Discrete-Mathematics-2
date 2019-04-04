@@ -5,7 +5,7 @@
 
 typedef struct GrafoSt* Grafo;
 
-/* construccion.c */
+////////// construccion.c 
 
 // Built a graph from stdin
 Grafo ConstruccionDelGrafo();
@@ -16,13 +16,13 @@ Grafo CopiarGrafo(Grafo);
 // Destroy a graph and free its memory
 void DestruccionDelGrafo(Grafo);
 
-// color.c
+////////// color.c
 
 u32 Greedy(Grafo);
 
 int Bipartito(Grafo);
 
-// query.c
+////////// query.c
 
 u32 NumeroDeVertices(Grafo);
 
@@ -41,7 +41,7 @@ u32 ColorJotaesimoVecino(Grafo, u32, u32);
 u32 NombreJotaesimoVecino(Grafo, u32, u32);
 
 
-// order.c
+////////// order.c
 
 char OrdenNatural(Grafo);
 

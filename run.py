@@ -185,9 +185,9 @@ def main():
     test, graph = args
 
     # Check if the arguments are valid
-    #if test == 'memory' and len(args) != 3:
-    #    print("Usage: run.py [options] test graph")
-    #    exit(0)
+    # if test == 'memory' and len(args) != 3:
+    #     print("Usage: run.py [options] test graph")
+    #     exit(0)
     if len(args) != 2:
         print("Usage: run.py [options] test graph")
         exit(0)
