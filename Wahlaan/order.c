@@ -16,6 +16,7 @@ char OrdenWelshPowell(Grafo G) {
     // Create buckets
     vector* buckets = (vector*)malloc(G->n * sizeof(vector));
     if(!buckets) return 1;
+
     fore(i, 0, G->n) {
         buckets[i] = vector_create();
         if(!buckets[i]) {
@@ -25,29 +26,29 @@ char OrdenWelshPowell(Grafo G) {
         }
     }
 
+    u32 delta = 0;
+
     // Fill buckets
     fore(i, 0, G->n) {
         u32 w = GradoDelVertice(G, i);
         if(vector_push_back(buckets[w], G->order[i])) {
-            fore(i, 0, G->n) vector_destroy(buckets[i]);
+            fore(j, 0, G->n) if(j != i) vector_destroy(buckets[j]);
             free(buckets);
             return 1;
         }
+        delta = max(w, delta);
     }
 
     // Fill order
     int i = 0;
-    fore(j, 0, G->n) {
+    for(int j = delta; j >= 0; j--) {
         fore(k, 0, vector_size(buckets[j])) {
             G->order[i++] = vector_at(buckets[j], k);
         }
         vector_destroy(buckets[j]);
     }
 
-    // We reverse the order in O(n)
-    fore(i, 0, G->n / 2) {
-        if(SwitchVertices(G, i, G->n - i - 1)) return 1;
-    }
+    fore(i, delta + 1, G->n) vector_destroy(buckets[i]);
 
     free(buckets);
 
@@ -69,6 +70,7 @@ char RMBCnormal(Grafo G) {
     // Create buckets
     vector* buckets = (vector*)malloc(G->x * sizeof(vector));
     if(!buckets) return 1;
+
     fore(i, 0, G->x) {
         buckets[i] = vector_create();
         if(!buckets[i]) {
@@ -82,7 +84,7 @@ char RMBCnormal(Grafo G) {
     fore(i, 0, G->n) {
         u32 c = ColorDelVertice(G, i);
         if(vector_push_back(buckets[c], G->order[i])) {
-            fore(i, 0, G->x) vector_destroy(buckets[i]);
+            fore(j, 0, G->x) if(j != i) vector_destroy(buckets[j]);
             free(buckets);
             return 1;
         }
@@ -134,6 +136,7 @@ char RMBCchicogrande(Grafo G) {
     // Create buckets
     vector* buckets = (vector*)malloc(maxcount * sizeof(vector));
     if(!buckets) return 1;
+
     fore(i, 0, maxcount) {
         buckets[i] = vector_create();
         if(!buckets[i]) {
@@ -149,7 +152,7 @@ char RMBCchicogrande(Grafo G) {
         u32 c = ColorDelVertice(G, i);
         u32 cc = count[c];
         if(vector_push_back(buckets[cc - 1], G->order[i])) {
-            fore(i, 0, maxcount) vector_destroy(buckets[i]);
+            fore(j, 0, maxcount) if(j != i) vector_destroy(buckets[j]);
             free(count);
             free(buckets);
             return 1;
