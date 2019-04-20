@@ -17,25 +17,30 @@ u32 NumeroDeColores(Grafo G) {
 
 // Returns the number of the vertex in the given position.
 u32 NombreDelVertice(Grafo G, u32 i) {
+    assert(i < G->n);
     return G->dict[G->order[i]];
 }
 
 // Returns the color of the given vertex. Otherwise 2^32-1.
 u32 ColorDelVertice(Grafo G, u32 i) {
+    if(G->n <= i) return ~0u;
     return G->color[G->order[i]];
 }
 
 // Returns the vertex adjacency in the given position.
 u32 GradoDelVertice(Grafo G, u32 i) {
+    if(G->n <= i) return ~0u;
     return vector_size(G->g[G->order[i]]);
 }
 
 // Returns the color of the given neighbour of the given vertex.
 u32 ColorJotaesimoVecino(Grafo G, u32 i, u32 j) {
+    if(G->n <= i || GradoDelVertice(G, i) <= j) return ~0u;
     return G->color[vector_at(G->g[G->order[i]], j)];
 }
 
 // Returns the number of the given neighbour of the given vertex.
 u32 NombreJotaesimoVecino(Grafo G, u32 i, u32 j) {
+    assert(i < G->n && j < GradoDelVertice(G, i));
     return G->dict[vector_at(G->g[G->order[i]], j)];
 }

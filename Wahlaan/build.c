@@ -42,7 +42,7 @@ static int read_numbers(char * line, u32 i, u32* u, u32* v) {
     while('0' <= line[i] && line[i] <= '9') {
         *v = *v * 10 + line[i++] - '0';
     }
-    // Check the trailing part are space characters
+    // Check that the trailing part are space characters
     while(('0' > line[i] || line[i] > '9') && line[i] != '\0') if(line[i++] != ' ') return -1;
     return 0;
 }
@@ -172,8 +172,17 @@ Grafo ConstruccionDelGrafo() {
         return NULL;
     }
 
+<<<<<<< HEAD
     // Default order: Natural
     OrdenNatural(G);
+=======
+    // We need to color the graph when we are done
+    G->colored = false;
+
+    // Default order: Natural
+    fore(i, 0, G->n) G->order[i] = i;
+    strcpy(G->current, "Nat");
+>>>>>>> final
 
     // Map the smallest vertex to 0, the second smallest to 1, ..., the greatest to n - 1
     map_sort(m);
@@ -218,6 +227,10 @@ Grafo CopiarGrafo(Grafo G) {
     copy->n = G->n;
     copy->m = G->m;
     copy->x = G->x;
+    
+    // Copy current state
+    strcpy(copy->current, G->current);
+    copy->colored = G->colored;
 
     // Allocs the vectors and arrays for verteces and colors
     copy->g = (vector*)malloc(copy->n * sizeof(vector));
