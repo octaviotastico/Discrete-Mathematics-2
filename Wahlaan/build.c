@@ -172,12 +172,12 @@ Grafo ConstruccionDelGrafo() {
         return NULL;
     }
 
-    // Default coloring: Ci = i
-    G->x = G->n;
-    fore(i, 0, G->n) G->color[i] = i;
+    // We need to color the graph when we are done
+    G->colored = false;
 
     // Default order: Natural
     fore(i, 0, G->n) G->order[i] = i;
+    strcpy(G->current, "Nat");
 
     // Map the smallest vertex to 0, the second smallest to 1, ..., the greatest to n - 1
     map_sort(m);
@@ -222,6 +222,10 @@ Grafo CopiarGrafo(Grafo G) {
     copy->n = G->n;
     copy->m = G->m;
     copy->x = G->x;
+    
+    // Copy current state
+    strcpy(copy->current, G->current);
+    copy->colored = G->colored;
 
     // Allocs the vectors and arrays for verteces and colors
     copy->g = (vector*)malloc(copy->n * sizeof(vector));

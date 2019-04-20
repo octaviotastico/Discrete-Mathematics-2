@@ -1,15 +1,25 @@
 #include "grafo.c"
 
 char OrdenNatural(Grafo G) {
+    // If it's already sorted this way
+    if(strncmp(G->current, "Nat", 3) == 0) return 0;
+
     // We mapped the verteces to [0, ..., n - 1] in a way where if i < j then dict[i] < dict[j]
     // So an O(n) approch like this one could work
     fore(i, 0, G->n) {
         G->order[i] = i;
     }
+    strcpy(G->current, "Nat");
+    
+    G->colored = false;
+
     return 0;
 }
 
 char OrdenWelshPowell(Grafo G) {
+    // If it's already sorted this way
+    if(strncmp(G->current, "Welsh", 5) == 0) return 0;
+
     // Invariant: Every node has at least n - 1 neighbours
     // So we can use bucket sort (with no internal ordering) to achieve O(n) sort
 
@@ -52,6 +62,10 @@ char OrdenWelshPowell(Grafo G) {
 
     free(buckets);
 
+    strcpy(G->current, "Welsh");
+
+    G->colored = false;
+
     return 0;
 }
 
@@ -60,10 +74,17 @@ char SwitchVertices(Grafo G, u32 i, u32 j) {
     u32 aux = G->order[i];
     G->order[i] = G->order[j];
     G->order[j] = aux;
+    strcpy(G->current, "SWv");
+    
+    G->colored = false;
+
     return 0;
 }
 
 char RMBCnormal(Grafo G) {
+    // If it's already sorted this way
+    if(strncmp(G->current, "RMBCn", 5) == 0) return 0;
+
     // Invariant: There are x colors, from 0 to x - 1
     // So we can use bucket sort (with no internal ordering)
 
@@ -101,10 +122,17 @@ char RMBCnormal(Grafo G) {
 
     free(buckets);
 
+    strcpy(G->current, "RMBCn");
+
+    G->colored = false;
+
     return 0;
 }
 
 char RMBCrevierte(Grafo G) {
+    // If it's already sorted this way
+    if(strncmp(G->current, "RMBCr", 5) == 0) return 0;
+    
     // We do a normal RMBC
     if(RMBCnormal(G)) return 1;
 
@@ -112,10 +140,18 @@ char RMBCrevierte(Grafo G) {
     fore(i, 0, G->n / 2) {
         if(SwitchVertices(G, i, G->n - i - 1)) return 1;
     }
+
+    strcpy(G->current, "RMBCr");
+
+    G->colored = false;
+
     return 0;
 }
 
 char RMBCchicogrande(Grafo G) {
+    // If it's already sorted this way
+    if(strncmp(G->current, "RMBCc", 5) == 0) return 0;
+    
     // We do a normal RMBC
     if(RMBCnormal(G)) return 1;
 
@@ -171,6 +207,10 @@ char RMBCchicogrande(Grafo G) {
     free(count);
     free(buckets);
 
+    strcpy(G->current, "RMBCc");
+
+    G->colored = false;
+
     return 0;
 }
 
@@ -182,5 +222,10 @@ char SwitchColores(Grafo G, u32 i, u32 j) {
         else if(G->color[k] == j)
             G->color[k] = i;
     }
+
+    strcpy(G->current, "SWc");
+
+    G->colored = false;
+
     return 0;
 }

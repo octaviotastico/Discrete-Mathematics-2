@@ -4,6 +4,7 @@
 #include "grafo.c"
 
 u32 Greedy(Grafo G) {
+	if(G->colored) return G->x;
 	// Allocs the vectors
 	u32* available = calloc(G->n, sizeof(u32));
 	vector v = vector_create();
@@ -36,6 +37,7 @@ u32 Greedy(Grafo G) {
 	}
 	free(available);
 	vector_destroy(v);
+	G->colored = true;
 	return G->x;
 }
 
@@ -61,6 +63,7 @@ int Bipartito(Grafo G) {
 				// If not possible
 				if(G->color[n] == G->color[v]) {
 					vector_destroy(stack);
+					G->colored = false;
 					Greedy(G);
 					return 0;
 				}
