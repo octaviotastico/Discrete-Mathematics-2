@@ -10,12 +10,12 @@ typedef struct Vector * vector;
 vector vector_create();
 
 // Push a new element. Resize if it's necessary
-u32 vector_push_back(vector, u32);
+int vector_push_back(vector, u32);
 
-// Deletes the last added element
+// Deletes the last added element and returns it
 u32 vector_pop_back(vector);
 
-// Returns the elem of the vector in the given position
+// Returns the element of the vector in the given position
 u32 vector_at(vector, u32);
 
 // Returns 1 if vector is empty, otherwise 0

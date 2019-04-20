@@ -5,10 +5,8 @@ struct Vector {
     size_t size, capacity;
 };
 
-static u32 vector_resize(vector v, size_t cap) {
+static void vector_resize(vector v, size_t cap) {
     v->array = (u32*)realloc(v->array, cap * sizeof(u32));
-    if(!v->array) return 1;
-    return 0;
 }
 
 vector vector_create() {
@@ -19,17 +17,16 @@ vector vector_create() {
     return v;
 }
 
-u32 vector_push_back(vector v, u32 x) {
+int vector_push_back(vector v, u32 x) {
     assert(v != NULL);
     if(v->size == v->capacity) {
         if(!v->capacity) v->capacity++;
         else v->capacity *= 2;
 
-        if(vector_resize(v, v->capacity))
-            return 1;
+        vector_resize(v, v->capacity);
+        if(!v->array) return -1;
     }
     v->array[v->size++] = x;
-
     return 0;
 }
 

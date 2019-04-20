@@ -28,7 +28,7 @@ $(BDIR)/%: $(ODIR)/%.o $(OBJ) $(LIB)
 	@$(CC) -o $@ $^ $(CFLAGS)
 
 penazzi: $(BDIR)/penazzi
-	$(BDIR)/penazzi $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
+	@$(BDIR)/penazzi $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
 performance: $(BDIR)/performance
 	@$(BDIR)/performance $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)

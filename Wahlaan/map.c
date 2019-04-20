@@ -18,7 +18,7 @@ map map_create() {
 int map_add(map m, u32 key, u32 value) {
     if(!m->size) {
         tree t = tree_create(key, value);
-        if(!t) return 1;
+        if(!t) return -1;
         m->root = t;
         m->size++;
     } else {
@@ -27,7 +27,7 @@ int map_add(map m, u32 key, u32 value) {
             tree_setValue(n, value);
         else {
             tree t = tree_create(key, value);
-            if(!t) return 1;
+            if(!t) return -1;
             tree_add(n, t);
             m->root = tree_balance(t);
             m->size++;
