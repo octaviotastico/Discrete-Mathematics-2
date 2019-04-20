@@ -72,7 +72,7 @@ def run_test(graph, test, diff, mem):
     os.system(command)
 
     # What have we done?
-    message = 'Runned ' + test + ' test with ' + sw + ' switches and ' + rm + ' RMBCs'
+    message = 'Runned ' + test + ' test with ' + sw + ' switches and ' + rm + ' RMBCs on ' + graph
     print(message)
 
     # Collect data depending on test
@@ -182,10 +182,6 @@ def main():
         diffile.write('EASY')
         diffile.close()
 
-    # Load the arguments in the variables
-    # if args[1] == 'memory': gr sw rm
-    test, graph = args
-
     # Check if the arguments are valid
     # if test == 'memory' and len(args) != 3:
     #     print("Usage: run.py [options] test graph")
@@ -194,8 +190,19 @@ def main():
         print("Usage: run.py [options] test graph")
         exit(0)
 
+    # Load the arguments in the variables
+    # if args[1] == 'memory': gr sw rm
+    test, graph = args
+
+    if(graph == '*'):
+        graph = os.listdir('samples/' + test)
+    else:
+        graph = [graph]
+    
+
     if valid(test):
-        run_test(graph, test, options.diff, options.mem)
+        for g in graph:
+            run_test(g, test, options.diff, options.mem)
     else:
         print("Wrong test name")
         print("Available tests are penazzi, performance and memory")
