@@ -1,6 +1,6 @@
 #include "checks.h"
 
-void properColoring(Grafo g, u32 x) {
+void properColoring(Grafo g) {
     u32 n = NumeroDeVertices(g);
     u32 y = 0;
     fore(i, 0, n) {
@@ -11,46 +11,24 @@ void properColoring(Grafo g, u32 x) {
             assert(ColorJotaesimoVecino(g, i, j) != c);
         }
     }
-    assert(y + 1 == x);
-}
-
-void checkIsomorfism(Grafo a, Grafo b) {
-	u32 n1 = NumeroDeVertices(a), n2 = NumeroDeVertices(b);
-	assert(n1 == n2);
-	assert(NumeroDeLados(a) == NumeroDeLados(b));
-	assert(NumeroDeColores(a) == NumeroDeColores(b));
-	fore(i, 0, n1) {
-		assert(NombreDelVertice(a, i) == NombreDelVertice(b, i));
-		assert(ColorDelVertice(a, i) == ColorDelVertice(b, i));
-		assert(GradoDelVertice(a, i) == GradoDelVertice(b, i));
-		fore(j, 0, GradoDelVertice(a, i)) {
-			assert(NombreJotaesimoVecino(a, i, j) == NombreJotaesimoVecino(b, i, j));
-			assert(ColorJotaesimoVecino(a, i, j) == ColorJotaesimoVecino(b, i, j));
-		}
-	}
+    assert(y + 1 == NumeroDeColores(g));
 }
 
 void checkNatural(Grafo g) {
 	u32 n = NumeroDeVertices(g);
     // First vertex
-	u32 ant = NombreDelVertice(g, 0);
 	fore(i, 1, n) {
-		u32 v = NombreDelVertice(g, i);
-        // Check if a[i] < a[i + 1]
-		assert(ant < v);
-		ant = v;
+		// Check that a[i] < a[i + 1]
+		assert(NombreDelVertice(g, i - 1) < NombreDelVertice(g, i));
 	}
 }
 
 void checkWelsh(Grafo g) {
 	u32 n = NumeroDeVertices(g);
     // Degree of first vertex
-	u32 ant = GradoDelVertice(g, 0);
 	fore(i, 1, n) {
-		u32 v = GradoDelVertice(g, i);
         // Check that d(a[i]) >= d(a[i + 1])
-		assert(ant >= v);
-		ant = v;
+		assert(GradoDelVertice(g, i - 1) >= GradoDelVertice(g, i));
 	}
 }
 
@@ -128,8 +106,7 @@ void correrNatural(Grafo* g, u32 n) {
 		OrdenNatural(g[i]);
 		#ifdef HARD
 		checkNatural(g[i]);
-		properColoring(g[i], NumeroDeColores(g[i]));
-		fore(j, 0, n) fore(k, i + 1, n) checkIsomorfism(g[j], g[k]);
+		properColoring(g[i]);
 		#endif
 	}
 	if(n == 1) fprintf(stdout, "%u\n", NumeroDeColores(g[0]));
@@ -141,8 +118,7 @@ void correrWelsh(Grafo* g, u32 n) {
 		Greedy(g[i]);
 		#ifdef HARD
 		checkWelsh(g[i]);
-		properColoring(g[i], NumeroDeColores(g[i]));
-		fore(i, 0, n) fore(j, i + 1, n) checkIsomorfism(g[i], g[j]);
+		properColoring(g[i]);
 		#endif
 	}
 	if(n == 1) fprintf(stdout, "%u\n", NumeroDeColores(g[0]));
@@ -158,7 +134,7 @@ void correrSwitch(Grafo* g, u32 n, u32 times) {
 		SwitchVertices(g[index], r1, r2);
 		Greedy(g[index]);
 		#ifdef HARD
-		properColoring(g[index], NumeroDeColores(g[index]));
+		properColoring(g[index]);
 		#endif
 		x = min(x, NumeroDeColores(g[index]));
 	}
@@ -192,7 +168,7 @@ void correrRMBC(Grafo* g, u32 n, u32 times) {
 		}
 		Greedy(g[index]);
 		#ifdef HARD
-		properColoring(g[index], NumeroDeColores(g[index]));
+		properColoring(g[index]);
 		#endif
 		assert(NumeroDeColores(g[index]) <= x);
 		x = NumeroDeColores(g[index]);
@@ -205,7 +181,7 @@ void correrBipartito(Grafo* g, u32 n) {
 	fore(i, 0, n) {
 		bip = Bipartito(g[i]);
 		#ifdef HARD
-		properColoring(g[i], NumeroDeColores(g[i]));
+		properColoring(g[i]);
 		#endif
 	}
 
