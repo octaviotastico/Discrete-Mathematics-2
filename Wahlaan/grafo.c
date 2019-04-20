@@ -11,8 +11,6 @@ struct GrafoSt {
     u32* color; // Array with colors.
     u32* order; // Order of vertex.
     vector* g; // Adjacency list.
-    char current[10];
-    bool colored;
 };
 
 #endif

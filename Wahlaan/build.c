@@ -175,9 +175,6 @@ Grafo ConstruccionDelGrafo() {
     // Default order: Natural
     OrdenNatural(G);
 
-    // Not yet colored
-    G->colored = false;
-
     // Map the smallest vertex to 0, the second smallest to 1, ..., the greatest to n - 1
     map_sort(m);
 

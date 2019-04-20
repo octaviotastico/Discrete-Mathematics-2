@@ -5,25 +5,27 @@
 
 u32 Greedy(Grafo G) {
 
-	if(G->colored) return G->x;
-
 	// Allocs the vectors
 	u32* available = calloc(G->n, sizeof(u32));
-	vector v = vector_create();
+	vector used = vector_create();
 
-	if(!available || !v) return -1;
+	if(!available || !used) return -1;
 
 	// Set the coloring to -1 (2^32 - 1 in unsigned int)
 	memset(G->color, ~0u, G->n * sizeof(u32));
 
 	G->x = 0;
 
+	u32* order = G->order;
+	vector* g = G->g;
+
 	fore(i, 0, G->n) {
-		fore(j, 0, GradoDelVertice(G, i)) {
-			u32 x = ColorJotaesimoVecino(G, i, j);
+		int v = order[i];
+		fore(j, 0, vector_size(g[v])) {
+			u32 x = G->color[vector_at(g[v], j)];
 			if(x != ~0u && !available[x]) {
 				available[x] = 1;
-				if(vector_push_back(v, x) < 0) {
+				if(vector_push_back(used, x) < 0) {
 					free(available);
 					return -1;
 				}
@@ -33,12 +35,13 @@ u32 Greedy(Grafo G) {
 		u32 c = 0;
 		while(available[c]) c++;
 		// Assign color
-		G->color[G->order[i]] = c;
+		G->color[order[i]] = c;
 		G->x = max(G->x, c + 1);
-		while(!vector_empty(v)) available[vector_pop_back(v)] = 0;
+		while(!vector_empty(used)) available[vector_pop_back(used)] = 0;
 	}
+	
 	free(available);
-	vector_destroy(v);
+	vector_destroy(used);
 	
 	return G->x;
 }
