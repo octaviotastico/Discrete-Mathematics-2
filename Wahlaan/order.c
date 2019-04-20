@@ -7,14 +7,7 @@ static void free_buckets(vector*, size_t);
 char OrdenNatural(Grafo G) {
     // We mapped the verteces to [0, ..., n - 1] in a way where if i < j then dict[i] < dict[j]
     // So an O(n) approch like this one could work
-<<<<<<< HEAD
-    fore(i, 0, G->n) {
-        G->order[i] = i;
-    }
-
-=======
     fore(i, 0, G->n) G->order[i] = i;
->>>>>>> final
     return 0;
 }
 
