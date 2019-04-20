@@ -1,63 +1,10 @@
 #include "grafo.c"
 
-static char* get_line(char* line) {
-    // Wipe previous line
-    if(line) free(line);
+static char* get_line(char*);
 
-    // Alloc space for line
-    line = (char*)malloc(sizeof(char));
-    if(!line) return line;
+static int read_numbers(char*, u32, u32*, u32*);
 
-    size_t sz = 0, cap = 1;
-
-    char c;
-    while(EOF != (c = fgetc(stdin)) && c != '\n' && c != '\r' && c != '\0') {
-        line[sz++] = c;
-        if(sz == cap) {
-            line = realloc(line, sizeof(char) * (cap *= 2));
-            if(!line) return line;
-        }
-    }
-
-    // Add null character to line
-    line[sz++] = '\0';
-
-    // Give the line its real size
-    return realloc(line, sizeof(char) * sz);
-}
-
-static int read_numbers(char * line, u32 i, u32* u, u32* v) {
-    // Check the first number starts at i
-    if('0' > line[i] && line[i] > '9') return -1;
-    // Init both numbers
-    *u = *v = 0;
-    // Read first number
-    while('0' <= line[i] && line[i] <= '9') {
-        *u = *u * 10 + line[i++] - '0';
-    }
-    // Advance to second number
-    while('0' > line[i] || line[i] > '9') if(line[i++] != ' ') return -1;
-
-    // Read second number
-    while('0' <= line[i] && line[i] <= '9') {
-        *v = *v * 10 + line[i++] - '0';
-    }
-    // Check that the trailing part are space characters
-    while(('0' > line[i] || line[i] > '9') && line[i] != '\0') if(line[i++] != ' ') return -1;
-    return 0;
-}
-
-static void free_resources(Grafo g, char* line, map m, u32* u, u32* v) {
-    // Destroy graph
-    if(g) DestruccionDelGrafo(g);
-    // Destroy buffer-input
-    if(line) free(line);
-    // Destroy map
-    if(m) map_destroy(m);
-    // Destroy edges
-    if(u) free(u);
-    if(v) free(v);
-}
+static void free_resources(Grafo, char*, map, u32*, u32*);
 
 Grafo ConstruccionDelGrafo() {
     // Allocs the memory of the graph
@@ -270,4 +217,63 @@ void DestruccionDelGrafo(Grafo G) {
     if(G->color) free(G->color);
     if(G->order) free(G->order);
     free(G);
+}
+
+static char* get_line(char* line) {
+    // Wipe previous line
+    if(line) free(line);
+
+    // Alloc space for line
+    line = (char*)malloc(sizeof(char));
+    if(!line) return line;
+
+    size_t sz = 0, cap = 1;
+
+    char c;
+    while(EOF != (c = fgetc(stdin)) && c != '\n' && c != '\r' && c != '\0') {
+        line[sz++] = c;
+        if(sz == cap) {
+            line = realloc(line, sizeof(char) * (cap *= 2));
+            if(!line) return line;
+        }
+    }
+
+    // Add null character to line
+    line[sz++] = '\0';
+
+    // Give the line its real size
+    return realloc(line, sizeof(char) * sz);
+}
+
+static int read_numbers(char* line, u32 i, u32* u, u32* v) {
+    // Check the first number starts at i
+    if('0' > line[i] && line[i] > '9') return -1;
+    // Init both numbers
+    *u = *v = 0;
+    // Read first number
+    while('0' <= line[i] && line[i] <= '9') {
+        *u = *u * 10 + line[i++] - '0';
+    }
+    // Advance to second number
+    while('0' > line[i] || line[i] > '9') if(line[i++] != ' ') return -1;
+
+    // Read second number
+    while('0' <= line[i] && line[i] <= '9') {
+        *v = *v * 10 + line[i++] - '0';
+    }
+    // Check that the trailing part are space characters
+    while(('0' > line[i] || line[i] > '9') && line[i] != '\0') if(line[i++] != ' ') return -1;
+    return 0;
+}
+
+static void free_resources(Grafo g, char* line, map m, u32* u, u32* v) {
+    // Destroy graph
+    if(g) DestruccionDelGrafo(g);
+    // Destroy buffer-input
+    if(line) free(line);
+    // Destroy map
+    if(m) map_destroy(m);
+    // Destroy edges
+    if(u) free(u);
+    if(v) free(v);
 }
