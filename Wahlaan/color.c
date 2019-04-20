@@ -20,8 +20,10 @@ u32 Greedy(Grafo G) {
 
 	fore(i, 0, G->n) {
 		int v = G->order[i];
+		// Check every of it's neighbours
 		fore(j, 0, vector_size(g[v])) {
 			u32 x = G->color[vector_at(g[v], j)];
+			// If vertex has color and was not marked as unavailable
 			if(x != ~0u && !available[x]) {
 				available[x] = 1;
 				if(vector_push_back(used, x) < 0) {
@@ -30,7 +32,7 @@ u32 Greedy(Grafo G) {
 				}
 			}
 		}
-		// Search the first avaible color
+		// Search the first available color
 		u32 c = 0;
 		while(available[c]) c++;
 		// Assign color
@@ -59,24 +61,27 @@ int Bipartito(Grafo G) {
 
 	vector* g = G->g;
 
-	fore(i, 0, G-> n) if(G->color[i] == ~0u) {
-		vector_push_back(stack, i);
+	fore(i, 0, G->n) if(G->color[i] == ~0u) {
+		// First vertex of the component
+		if(vector_push_back(stack, i) < 0) return -1;
 		G->color[i] = 0;
+		// While vertices on component
 		while(!vector_empty(stack)) {
+			// Grab first element
 			u32 v = vector_pop_back(stack);
-			// Add every neighbour of v
+			// Check every neighbour
 			fore(j, 0, vector_size(g[v])) {
 				u32 n = vector_at(g[v], j);
-				// If not possible
+				// If not possible, run greedy and return
 				if(G->color[n] == G->color[v]) {
 					vector_destroy(stack);
 					Greedy(G);
 					return 0;
 				}
-				// If neighbour does not have color
+				// If neighbour does not have color, color and push it
 				if(G->color[n] == ~0u) {
 					G->color[n] = (G->color[v] + 1) % 2;
-					vector_push_back(stack, n);
+					if(vector_push_back(stack, n) < 0) return -1;
 					G->x = 2;
 				}
 			}
