@@ -172,12 +172,11 @@ Grafo ConstruccionDelGrafo() {
         return NULL;
     }
 
-    // Default coloring: Ci = i
-    G->x = G->n;
-    fore(i, 0, G->n) G->color[i] = i;
-
     // Default order: Natural
-    fore(i, 0, G->n) G->order[i] = i;
+    OrdenNatural(G);
+
+    // Not yet colored
+    G->colored = false;
 
     // Map the smallest vertex to 0, the second smallest to 1, ..., the greatest to n - 1
     map_sort(m);

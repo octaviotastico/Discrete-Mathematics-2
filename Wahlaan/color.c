@@ -4,6 +4,9 @@
 #include "grafo.c"
 
 u32 Greedy(Grafo G) {
+
+	if(G->colored) return G->x;
+
 	// Allocs the vectors
 	u32* available = calloc(G->n, sizeof(u32));
 	vector v = vector_create();
@@ -36,6 +39,7 @@ u32 Greedy(Grafo G) {
 	}
 	free(available);
 	vector_destroy(v);
+	
 	return G->x;
 }
 
