@@ -5,7 +5,7 @@
 
 typedef struct GrafoSt* Grafo;
 
-////////// construccion.c 
+////////// build.c 
 
 // Built a graph from stdin
 Grafo ConstruccionDelGrafo();
