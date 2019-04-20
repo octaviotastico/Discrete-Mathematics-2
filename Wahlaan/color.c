@@ -5,9 +5,12 @@
 
 u32 Greedy(Grafo G) {
 	if(G->colored) return G->x;
-	// Allocs the vectors
-	u32* available = calloc(G->n, sizeof(u32));
+
+	// Allocs resources
 	vector v = vector_create();
+	u32 tam = G->n;
+	if(strncmp(G->current, "RMBC", 4) == 0) tam = G->x;
+	u32* available = (u32*)calloc(tam, sizeof(u32)); 
 
 	if(!available || !v) return -1;
 
@@ -63,7 +66,7 @@ int Bipartito(Grafo G) {
 				// If not possible
 				if(G->color[n] == G->color[v]) {
 					vector_destroy(stack);
-					G->colored = false;
+					G->x = G->n, G->colored = false;
 					Greedy(G);
 					return 0;
 				}

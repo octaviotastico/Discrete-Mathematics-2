@@ -42,7 +42,7 @@ static int read_numbers(char * line, u32 i, u32* u, u32* v) {
     while('0' <= line[i] && line[i] <= '9') {
         *v = *v * 10 + line[i++] - '0';
     }
-    // Check the trailing part are space characters
+    // Check that the trailing part are space characters
     while(('0' > line[i] || line[i] > '9') && line[i] != '\0') if(line[i++] != ' ') return -1;
     return 0;
 }
