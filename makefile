@@ -7,9 +7,11 @@ TDIR := tests
 VPATH = $(IDIR):$(TDIR):$(LDIR)
 
 CC := gcc
-CFLAGS := -g -I$(IDIR) -I$(LDIR) $(OFLAG) -Wall -Wextra -O3 -std=c99
 
-# CFLAGS += $(OFLAG)
+PROTECTION := -g -DNDEBUG -Wshadow -fstack-protector -fsanitize=undefined -fsanitize=signed-integer-overflow
+CFLAGS := -I$(IDIR) -I$(LDIR) $(OFLAG) -Wall -Wextra -O3 -std=c99
+
+# CFLAGS += $(PROTECTION)
 
 # Headers
 _LIB = $(wildcard $(IDIR)/*.h) checks.h
