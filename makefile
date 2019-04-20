@@ -9,7 +9,7 @@ VPATH = $(IDIR):$(TDIR):$(LDIR)
 OFLAG := ""
 
 CC := gcc
-CFLAGS := -g -I$(IDIR) -I$(LDIR) -Wall -Wextra -O3 -std=c99
+CFLAGS := -g -I$(IDIR) -I$(LDIR) $(OFLAG) -Wall -Wextra -O3 -std=c99
 
 # CFLAGS += $(OFLAG)
 
