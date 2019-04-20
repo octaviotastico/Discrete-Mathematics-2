@@ -38,6 +38,25 @@ static void free_resources(Grafo g, char* line, map m, u32* u, u32* v) {
     if(v) free(v);
 }
 
+static int read_numbers(char * line, u32 i, u32* u, u32* v) {
+    // Init both numbers
+    *u = *v = 0;
+    // Read first number starting from i
+    while('0' <= line[i] && line[i] <= '9') {
+        *u = *u * 10 + line[i++] - '0';
+    }
+    // Advance to second number
+    while('0' > line[i] || line[i] > '9') if(line[i++] == '\0') return -1;
+
+    // Read second number
+    while('0' <= line[i] && line[i] <= '9') {
+        *v = *v * 10 + line[i++] - '0';
+    }
+    // Check if line ends there
+    if(line[i] != '\0') return -1;
+    return 0;
+}
+
 Grafo ConstruccionDelGrafo() {
     // Allocs the memory of the graph
     Grafo G = (Grafo)malloc(sizeof(struct GrafoSt));
@@ -51,7 +70,7 @@ Grafo ConstruccionDelGrafo() {
     do {
         line = get_line(line);
         if(!line) {
-            DestruccionDelGrafo(G);
+            free_resources(G, line, NULL, NULL, NULL);
             printf("Fallo al leer\n");
             return NULL;
         }
@@ -66,25 +85,11 @@ Grafo ConstruccionDelGrafo() {
         return NULL;
     }
 
-    // Start looking at pos 7
-    u32 i = 7;
-
-    // Read n
-    while('0' <= line[i] && line[i] <= '9') {
-        G->n = G->n * 10u + line[i++] - '0';
-    }
-
-    // Advance to m
-    while('0' > line[i] || line[i] > '9') {
-        if(line[i] == '\0') {
-            free_resources(G, line, NULL, NULL, NULL);
-            printf("Error en primera linea sin comentario\n");
-        } else i++;
-    }
-
-    // Read m
-    while('0' <= line[i] && line[i] <= '9') {
-        G->m = G->m * 10u + line[i++] - '0';
+    // Read n, m
+    if(read_numbers(line, 7, &G->n, &G->m) < 0) {
+        free_resources(G, line, NULL, NULL, NULL);
+        printf("Error en primera linea sin comentario\n");
+        return NULL;
     }
 
     // ---------------- ALLOC RESOURCES ---------------- //
@@ -92,6 +97,12 @@ Grafo ConstruccionDelGrafo() {
     // Alloc map and adjacency list
     map m = map_create();
     G->g = (vector*)malloc(G->n * sizeof(vector));
+
+    /*
+    No se controla que G->g se haya podido allocar
+    Crear una funcion que devuelva un vector*,
+    allocando todo lo de adentro, que devuelva -1 en caso de error
+    */
 
     // Alloc the vectors for the adj. list
     fore(i, 0, G->n) {

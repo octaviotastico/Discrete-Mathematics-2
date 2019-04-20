@@ -6,14 +6,7 @@ TDIR := tests
 
 VPATH = $(IDIR):$(TDIR):$(LDIR)
 
-INPUT = ""
-OUTPUT = ""
-
 OFLAG := ""
-
-GRAPHS = 0
-SWITCH = 0
-RMBC = 0
 
 CC := gcc
 CFLAGS := -g -I$(IDIR) -I$(LDIR) -Wall -Wextra -O3 -std=c99
@@ -35,7 +28,7 @@ $(BDIR)/%: $(ODIR)/%.o $(OBJ) $(LIB)
 	@$(CC) -o $@ $^ $(CFLAGS)
 
 penazzi: $(BDIR)/penazzi
-	@$(BDIR)/penazzi $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
+	$(BDIR)/penazzi $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
 performance: $(BDIR)/performance
 	@$(BDIR)/performance $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
