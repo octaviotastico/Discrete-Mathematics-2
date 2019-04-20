@@ -202,6 +202,9 @@ Grafo ConstruccionDelGrafo() {
 
     // Free resources
     free_resources(NULL, line, m, u, v);
+
+    // Run Greedy
+    Greedy(G);
     
     // Return graph
     return G;
