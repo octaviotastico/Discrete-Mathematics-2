@@ -6,7 +6,7 @@ static char* get_line(char* line) {
 
     // Alloc space for line
     line = (char*)malloc(sizeof(char));
-    if(!line) return line;
+    if(!line) return NULL;
 
     size_t sz = 0, cap = 1;
 
@@ -103,13 +103,18 @@ Grafo ConstruccionDelGrafo() {
 
     // Alloc map and adjacency list
     map m = map_create();
-    G->g = (vector*)malloc(G->n * sizeof(vector));
+    if(!m) {
+        free_resources(G, line, NULL, NULL, NULL);
+        printf("fallo al reservar memoria\n");
+        return NULL;
+    }
 
-    /*
-    No se controla que G->g se haya podido allocar
-    Crear una funcion que devuelva un vector*,
-    allocando todo lo de adentro, que devuelva -1 en caso de error
-    */
+    G->g = (vector*)malloc(G->n * sizeof(vector));
+    if(!G->g) {
+        free_resources(G, line, m, NULL, NULL);
+        printf("fallo al reservar memoria para la estructura GrafoSt\n");
+        return NULL;
+    }
 
     // Alloc the vectors for the adj. list
     fore(i, 0, G->n) {
@@ -209,9 +214,6 @@ Grafo ConstruccionDelGrafo() {
 Grafo CopiarGrafo(Grafo G) {
     // Creates the new graph
     Grafo copy = (Grafo)malloc(sizeof(struct GrafoSt));
-
-    /* Modificar aca tambien, como arriba */
-
     if(!copy) return NULL;
 
     // Copy number of vertex, edges, and number of colors

@@ -2,6 +2,8 @@
 
 static vector* create_buckets(size_t);
 
+static void fill_order(Grafo, vector*, size_t);
+
 static void free_buckets(vector*, size_t);
 
 char OrdenNatural(Grafo G) {
@@ -73,12 +75,7 @@ char RMBCnormal(Grafo G) {
     }
 
     // Fill order
-    int i = 0;
-    fore(j, 0, G->n) {
-        fore(k, 0, vector_size(buckets[j])) {
-            G->order[i++] = vector_at(buckets[j], k);
-        }
-    }
+    fill_order(G, buckets, G->n);
 
     free_buckets(buckets, G->n);
 
@@ -127,12 +124,7 @@ char RMBCchicogrande(Grafo G) {
     }
 
     // Fill order
-    int i = 0;
-    fore(j, 0, maxcount) {
-        fore(k, 0, vector_size(buckets[j])) {
-            G->order[i++] = vector_at(buckets[j], k);
-        }
-    }
+    fill_order(G, buckets, maxcount);
 
     free_buckets(buckets, maxcount);
 
@@ -162,6 +154,15 @@ static vector* create_buckets(size_t sz) {
         }
     }
     return buckets;
+}
+
+static void fill_order(Grafo G, vector* buckets, size_t sz) {
+    int i = 0;
+    fore(j, 0, sz) {
+        fore(k, 0, vector_size(buckets[j])) {
+            G->order[i++] = vector_at(buckets[j], k);
+        }
+    }
 }
 
 static void free_buckets(vector* buckets, size_t sz) {
