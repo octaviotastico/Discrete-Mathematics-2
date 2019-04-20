@@ -194,7 +194,8 @@ void correrRMBC(Grafo* g, u32 n, u32 times) {
 		#ifdef HARD
 		properColoring(g[index], NumeroDeColores(g[index]));
 		#endif
-		x = min(x, NumeroDeColores(g[index]));
+		assert(NumeroDeColores(g[index]) <= x);
+		x = NumeroDeColores(g[index]);
 	}
 	fprintf(stdout, "%u\n", x);
 }

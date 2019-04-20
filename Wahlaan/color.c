@@ -16,11 +16,10 @@ u32 Greedy(Grafo G) {
 
 	G->x = 0;
 
-	u32* order = G->order;
 	vector* g = G->g;
 
 	fore(i, 0, G->n) {
-		int v = order[i];
+		int v = G->order[i];
 		fore(j, 0, vector_size(g[v])) {
 			u32 x = G->color[vector_at(g[v], j)];
 			if(x != ~0u && !available[x]) {
@@ -35,11 +34,13 @@ u32 Greedy(Grafo G) {
 		u32 c = 0;
 		while(available[c]) c++;
 		// Assign color
-		G->color[order[i]] = c;
+		G->color[G->order[i]] = c;
+		// Update number of colors
 		G->x = max(G->x, c + 1);
+		// Set used positions to zero
 		while(!vector_empty(used)) available[vector_pop_back(used)] = 0;
 	}
-	
+
 	free(available);
 	vector_destroy(used);
 	
@@ -56,15 +57,16 @@ int Bipartito(Grafo G) {
 
 	G->x = 1;
 
+	vector* g = G->g;
+
 	fore(i, 0, G-> n) if(G->color[i] == ~0u) {
 		vector_push_back(stack, i);
-		// Color first vertex
 		G->color[i] = 0;
 		while(!vector_empty(stack)) {
 			u32 v = vector_pop_back(stack);
 			// Add every neighbour of v
-			fore(j, 0, vector_size(G->g[v])) {
-				u32 n = vector_at(G->g[v], j);
+			fore(j, 0, vector_size(g[v])) {
+				u32 n = vector_at(g[v], j);
 				// If not possible
 				if(G->color[n] == G->color[v]) {
 					vector_destroy(stack);
@@ -80,7 +82,6 @@ int Bipartito(Grafo G) {
 			}
 		}
 	}
-	// Frees the resources
 	vector_destroy(stack);
 	return 1;
 }
