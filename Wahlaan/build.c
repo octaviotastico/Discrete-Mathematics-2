@@ -172,17 +172,8 @@ Grafo ConstruccionDelGrafo() {
         return NULL;
     }
 
-<<<<<<< HEAD
     // Default order: Natural
     OrdenNatural(G);
-=======
-    // We need to color the graph when we are done
-    G->colored = false;
-
-    // Default order: Natural
-    fore(i, 0, G->n) G->order[i] = i;
-    strcpy(G->current, "Nat");
->>>>>>> final
 
     // Map the smallest vertex to 0, the second smallest to 1, ..., the greatest to n - 1
     map_sort(m);
