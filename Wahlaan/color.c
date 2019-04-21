@@ -75,7 +75,6 @@ int Bipartito(Grafo G) {
 				// If not possible, run greedy and return
 				if(G->color[n] == G->color[v]) {
 					vector_destroy(stack);
-					G->x = G->n, G->colored = false;
 					Greedy(G);
 					return 0;
 				}

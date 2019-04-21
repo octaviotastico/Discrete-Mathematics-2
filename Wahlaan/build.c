@@ -9,7 +9,7 @@ static void free_resources(Grafo, char*, map, u32*, u32*);
 Grafo ConstruccionDelGrafo() {
     // Allocs the memory of the graph
     Grafo G = (Grafo)malloc(sizeof(struct GrafoSt));
-    G->n = G->m = G->x = 0;
+    G->n = G->m = G->x = G->d = 0;
     G->dict = G->color = G->order = NULL;
     G->g = NULL;
 
@@ -130,6 +130,8 @@ Grafo ConstruccionDelGrafo() {
     // Map the smallest vertex to 0, the second smallest to 1, ..., the greatest to n - 1
     map_sort(m);
 
+    vector * g = G->g;
+
     // Construct adjacency list
     fore(i, 0, G->m) {
         // Find the mapping of u and v
@@ -141,12 +143,14 @@ Grafo ConstruccionDelGrafo() {
         G->dict[real_v] = v[i];
 
         // Push edges real_u -> real_v and real_u <- real_v
-        if(vector_push_back(G->g[real_u], real_v) < 0 || vector_push_back(G->g[real_v], real_u) < 0) {
+        if(vector_push_back(g[real_u], real_v) < 0 || vector_push_back(g[real_v], real_u) < 0) {
             free_resources(G, line, m, u, v);
             printf("Fallo al crear una arista\n");
             return NULL;
         }
     }
+
+    fore(i, 0, G->n) G->d = max(G->d, vector_size(g[i]));
 
     // Free resources
     free_resources(NULL, line, m, u, v);
@@ -193,10 +197,13 @@ Grafo CopiarGrafo(Grafo G) {
             return NULL;
         }
 
+        vector * g = G->g;
+        vector * cg = copy->g;
+
         // Copy the adjacency of every vertex
-        fore(j, 0, vector_size(G->g[i])) {
-            u32 v = vector_at(G->g[i], j);
-            if(vector_push_back(copy->g[i], v)) {
+        fore(j, 0, vector_size(g[i])) {
+            u32 v = vector_at(g[i], j);
+            if(vector_push_back(cg[i], v)) {
                 DestruccionDelGrafo(copy);
                 return NULL;
             }
