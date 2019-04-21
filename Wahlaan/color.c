@@ -6,8 +6,8 @@
 u32 Greedy(Grafo G) {
 
 	// Allocs the vectors
-	u32* available = (u32*)calloc(G->n, sizeof(u32));
-	u32* used = (u32*)calloc(G->n, sizeof(u32));
+	u32* available = calloc(G->n, sizeof(u32));
+	vector used = vector_create();
 
 	if(!available || !used) return -1;
 
@@ -17,7 +17,6 @@ u32 Greedy(Grafo G) {
 	G->x = 0;
 
 	vector* g = G->g;
-	u32 counter = 0;
 
 	fore(i, 0, G->n) {
 		int v = G->order[i];
@@ -27,7 +26,10 @@ u32 Greedy(Grafo G) {
 			// If vertex has color and was not marked as unavailable
 			if(x != ~0u && !available[x]) {
 				available[x] = 1;
-				used[counter++] = x;
+				if(vector_push_back(used, x) < 0) {
+					free(available);
+					return -1;
+				}
 			}
 		}
 		// Search the first available color
@@ -38,11 +40,12 @@ u32 Greedy(Grafo G) {
 		// Update number of colors
 		G->x = max(G->x, c + 1);
 		// Set used positions to zero
-		while(counter) available[used[--counter]] = 0;
+		while(!vector_empty(used)) available[vector_pop_back(used)] = 0;
 	}
 
 	free(available);
-	free(used);	
+	vector_destroy(used);
+	
 	return G->x;
 }
 
