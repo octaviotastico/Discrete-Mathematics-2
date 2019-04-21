@@ -252,12 +252,19 @@ The syntax of the graphs used by this program is the following:
 For example:
 
 > c Hello
+
 > c I'm a comment
+
 > c I'm a comment too
+
 > c I will be ignored
+
 > p edge 3 3
+
 > e 1 2
+
 > e 1 3
+
 > e 2 3
 
   
