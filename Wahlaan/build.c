@@ -168,10 +168,6 @@ Grafo CopiarGrafo(Grafo G) {
     copy->m = G->m;
     copy->x = G->x;
     
-    // Copy current state
-    strcpy(copy->current, G->current);
-    copy->colored = G->colored;
-
     // Allocs the vectors and arrays for verteces and colors
     copy->g = (vector*)malloc(copy->n * sizeof(vector));
     copy->dict = (u32*)malloc(copy->n * sizeof(u32));

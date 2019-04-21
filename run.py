@@ -93,15 +93,15 @@ def run_test(graph, test, diff, mem):
     
     if 'performance' == test:
         print('Time spent creating graph: ' + outfile.readline())
-        next(outfile)
+        outfile.readline();
         print('Time spent running Natural: ' + outfile.readline())
-        next(outfile)
+        outfile.readline();
         print('Time spent running Welsh: ' + outfile.readline())
-        next(outfile)
+        outfile.readline();
         print('Time spent running Switch: ' + outfile.readline())
-        next(outfile)
+        outfile.readline();
         print('Time spent running RMBC: ' + outfile.readline())
-        next(outfile)
+        outfile.readline();
         print('Time spent running Bipartito: ' + outfile.readline())
         print('Time spent destroying graph: ' + outfile.readline())
         print('Penazzi time: ' + ansfile.readline())

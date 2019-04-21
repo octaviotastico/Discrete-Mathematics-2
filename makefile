@@ -11,7 +11,7 @@ CC := gcc
 PROTECTION := -g -DNDEBUG -Wshadow -fstack-protector -fsanitize=undefined -fsanitize=signed-integer-overflow
 CFLAGS := -I$(IDIR) -I$(LDIR) $(OFLAG) -Wall -Wextra -O3 -std=c99
 
-CFLAGS += $(PROTECTION)
+# CFLAGS += $(PROTECTION)
 
 # Headers
 _LIB = $(wildcard $(IDIR)/*.h) checks.h
@@ -34,9 +34,9 @@ performance: $(BDIR)/performance
 	@$(BDIR)/performance $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
 memory: $(BDIR)/memory
-	@valgrind --show-reachable=yes --leak-check=full -v --log-file="out/memory/$(notdir $(OUTPUT))" $(BDIR)/$(subst .v,,$@) $(GRAPHS) $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
+	@valgrind --show-reachable=yes --track-origins=yes --leak-check=full -v --log-file="out/memory/$(notdir $(OUTPUT))" $(BDIR)/$(subst .v,,$@) $(GRAPHS) $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 %.v: $(BDIR)/%
-	@valgrind --show-reachable=yes --leak-check=full -v --log-file="out/memory/$(notdir $(OUTPUT))" $(BDIR)/$(subst .v,,$@) $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
+	@valgrind --show-reachable=yes --track-origins=yes --leak-check=full -v --log-file="out/memory/$(notdir $(OUTPUT))" $(BDIR)/$(subst .v,,$@) $(SWITCH) $(RMBC) <$(INPUT) >$(OUTPUT)
 
 .PRECIOUS: $(ODIR)/%.o
 

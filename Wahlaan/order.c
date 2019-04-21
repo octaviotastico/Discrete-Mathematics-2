@@ -127,7 +127,8 @@ char RMBCchicogrande(Grafo G) {
     fill_order(G, buckets, maxcount);
 
     free_buckets(buckets, maxcount);
-
+    free(count);
+    
     return 0;
 }
 
