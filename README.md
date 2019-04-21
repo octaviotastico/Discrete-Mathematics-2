@@ -170,10 +170,7 @@ This will run the memory test with all the graphs in hard difficulty.
   * **Performance**: Checks how much time does it takes to run Switches and RMBC's with large graphs.
   * **Memory**: Uses CopiarGrafo, works with the copy, and checks whether there are leaks or not. It has the -v flag activated by default, so you don't have to run it with -v. Warning: Do not run Memory test with the -t flag on, or if you do so, then desactivate the RMBC assert that prevent RMBC to increase colors.
 
----
-
-#### **Graphs**
-
+***Graphs**:    
 There are 3 types of graphs: Penazzi, Performance and Memory.    
 You should put the graphs in: "**/samples**/penazzi", "**/samples**/performance" or "**/samples**/memory"    
 For Penazzi graphs **we know** what the answer is for the coloring functions.    
