@@ -48,7 +48,7 @@ u32 Greedy(Grafo G) {
 }
 
 int Bipartito(Grafo G) {
-	vector stack = vector_create();
+	u32* stack = (u32*)calloc(G->n, sizeof(u32));
 
 	if(!stack) return -1;
 
@@ -58,34 +58,36 @@ int Bipartito(Grafo G) {
 	G->x = 1;
 
 	vector* g = G->g;
+	u32 index = 0;
 
 	fore(i, 0, G->n) if(G->color[i] == ~0u) {
 		// First vertex of the component
-		if(vector_push_back(stack, i) < 0) return -1;
+		stack[index++] = i;
+		// Color it
 		G->color[i] = 0;
 		// While vertices on component
-		while(!vector_empty(stack)) {
+		while(index) {
 			// Grab first element
-			u32 v = vector_pop_back(stack);
+			u32 v = stack[--index];
 			// Check every neighbour
 			fore(j, 0, vector_size(g[v])) {
 				u32 n = vector_at(g[v], j);
 				// If not possible, run greedy and return
 				if(G->color[n] == G->color[v]) {
-					vector_destroy(stack);
+					free(stack);
 					Greedy(G);
 					return 0;
 				}
 				// If neighbour does not have color, color and push it
 				if(G->color[n] == ~0u) {
 					G->color[n] = (G->color[v] + 1) % 2;
-					if(vector_push_back(stack, n) < 0) return -1;
+					stack[index++] = n;
 					G->x = 2;
 				}
 			}
 		}
 	}
-	vector_destroy(stack);
+	free(stack);
 	return 1;
 }
 
