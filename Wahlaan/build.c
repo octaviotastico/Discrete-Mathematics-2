@@ -167,10 +167,11 @@ Grafo CopiarGrafo(Grafo G) {
     Grafo copy = (Grafo)malloc(sizeof(struct GrafoSt));
     if(!copy) return NULL;
 
-    // Copy number of vertex, edges, and number of colors
+    // Copy number of vertex, edges, number of colors, and delta
     copy->n = G->n;
     copy->m = G->m;
     copy->x = G->x;
+    copy->d = G->d;
     
     // Allocs the vectors and arrays for verteces and colors
     copy->g = (vector*)malloc(copy->n * sizeof(vector));
