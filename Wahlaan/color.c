@@ -6,8 +6,8 @@
 u32 Greedy(Grafo G) {
 
 	// Allocs the vectors
-	u32* available = (u32*)calloc(G->n, sizeof(u32));
-	u32* used = (u32*)calloc(G->n, sizeof(u32));
+	u32* available = calloc(G->n, sizeof(u32));
+	vector used = vector_create();
 
 	if(!available || !used) return -1;
 
@@ -17,7 +17,6 @@ u32 Greedy(Grafo G) {
 	G->x = 0;
 
 	vector* g = G->g;
-	u32 index = 0;
 
 	fore(i, 0, G->n) {
 		int v = G->order[i];
@@ -27,7 +26,10 @@ u32 Greedy(Grafo G) {
 			// If vertex has color and was not marked as unavailable
 			if(x != ~0u && !available[x]) {
 				available[x] = 1;
-				used[index++] = x;
+				if(vector_push_back(used, x) < 0) {
+					free(available);
+					return -1;
+				}
 			}
 		}
 		// Search the first available color
@@ -38,17 +40,17 @@ u32 Greedy(Grafo G) {
 		// Update number of colors
 		G->x = max(G->x, c + 1);
 		// Set used positions to zero
-		while(index) available[used[--index]] = 0;
+		while(!vector_empty(used)) available[vector_pop_back(used)] = 0;
 	}
 
 	free(available);
-	free(used);
+	vector_destroy(used);
 	
 	return G->x;
 }
 
 int Bipartito(Grafo G) {
-	u32* stack = (u32*)calloc(G->n, sizeof(u32));
+	vector stack = vector_create();
 
 	if(!stack) return -1;
 
@@ -58,36 +60,34 @@ int Bipartito(Grafo G) {
 	G->x = 1;
 
 	vector* g = G->g;
-	u32 index = 0;
 
 	fore(i, 0, G->n) if(G->color[i] == ~0u) {
 		// First vertex of the component
-		stack[index++] = i;
-		// Color it
+		if(vector_push_back(stack, i) < 0) return -1;
 		G->color[i] = 0;
 		// While vertices on component
-		while(index) {
+		while(!vector_empty(stack)) {
 			// Grab first element
-			u32 v = stack[--index];
+			u32 v = vector_pop_back(stack);
 			// Check every neighbour
 			fore(j, 0, vector_size(g[v])) {
 				u32 n = vector_at(g[v], j);
 				// If not possible, run greedy and return
 				if(G->color[n] == G->color[v]) {
-					free(stack);
+					vector_destroy(stack);
 					Greedy(G);
 					return 0;
 				}
 				// If neighbour does not have color, color and push it
 				if(G->color[n] == ~0u) {
 					G->color[n] = (G->color[v] + 1) % 2;
-					stack[index++] = n;
+					if(vector_push_back(stack, n) < 0) return -1;
 					G->x = 2;
 				}
 			}
 		}
 	}
-	free(stack);
+	vector_destroy(stack);
 	return 1;
 }
 
